@@ -143,6 +143,18 @@ footer p{margin:0 0 8px}
 .smsg{font-size:12px;color:var(--muted);margin:8px 0}
 #scanOut{width:100%;height:80px;font:12px var(--f-mono);margin-bottom:8px}
 .sbtns{display:flex;gap:8px;flex-wrap:wrap}
+
+.vtabs{display:flex;gap:4px;background:var(--bg);border-radius:9px;padding:3px}
+.vtabs button{font:inherit;font-size:13px;font-weight:700;border:0;background:none;color:var(--muted);padding:5px 10px;border-radius:7px;cursor:pointer}
+.vtabs button[aria-selected="true"]{background:var(--panel);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.vtabs .n{font-family:var(--f-mono);font-weight:500;font-size:12px}
+#vDead[aria-selected="true"] .n{color:#c2410c}
+.deadbar{padding:12px 14px;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:8px;align-items:flex-start}
+.deadbar p{margin:0;font-size:13px;color:var(--muted)}
+.deadbar .go{margin:0;font-size:14px;padding:7px 14px;border:0;cursor:pointer;font-family:inherit}
+.smodes{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.smodes .go{margin:0;font-size:13px;padding:6px 10px;cursor:pointer;font-family:inherit;border:0}
+.smodes .go.ghost{border:1px solid var(--accent)}
 footer{margin-top:22px;font-size:13px;color:var(--muted);max-width:80ch}
 footer a{color:var(--accent)}
 </style>
@@ -163,9 +175,10 @@ footer a{color:var(--accent)}
     <div class="sbar"><i id="scanBar"></i></div>
     <p class="snum" id="scanNum"></p>
     <div class="slots"><div class="slot"></div><div class="slot"></div><div class="slot"></div></div>
-    <p class="smsg" id="scanMsg"></p>
+    <p class="smsg" id="scanMsg">選一種檢查方式。每個直播最多試播 20 秒，檢查時請讓這個分頁留在前景。</p>
     <textarea id="scanOut" hidden readonly aria-label="失效清單"></textarea>
-    <div class="sbtns"><button class="toggle" id="scanStop">暫停</button><button class="toggle" id="scanCopy">複製失效清單</button></div>
+    <div class="smodes"><button class="go" data-scan="new">檢查還沒檢查的</button><button class="go ghost" data-scan="dead">重新檢查失效清單</button><button class="go ghost" data-scan="all">全部重新檢查</button></div>
+    <div class="sbtns"><button class="toggle" id="scanStop" hidden>暫停</button><button class="toggle" id="scanCopy">複製失效清單</button></div>
   </div>
   <p class="localnote" id="localnote" hidden>你是直接從電腦打開這個檔案，YouTube 不允許這樣嵌入播放，所以影片會在小視窗開啟。想在頁面裡直接播，請改用一起附上的啟動檔（start-wildcams）打開。</p>
   <div class="grid">
@@ -178,7 +191,7 @@ footer a{color:var(--accent)}
       <div class="detail" id="detail" aria-live="polite"></div>
     </section>
     <aside>
-      <div class="ahead"><h3 id="count">直播清單</h3><span class="abtns"><button class="toggle" id="hideBtn" hidden></button><button class="toggle" id="sortBtn">白天優先</button></span></div>
+      <div class="ahead"><h3 id="count" class="sr">直播清單</h3><div class="vtabs" role="tablist"><button id="vLive" role="tab">直播 <span class="n" id="nLive"></span></button><button id="vDead" role="tab">失效清單 <span class="n" id="nDead"></span></button></div><button class="toggle" id="sortBtn">白天優先</button></div>
       <ul class="list" id="list"></ul>
     </aside>
   </div>
@@ -524,10 +537,11 @@ const CAMS = CAMS_RAW.map((r,i)=>{
 });
 
 /* ---------- live status (checked in this browser) ---------- */
-const ST_KEY="wildcams-status-v1", ST_TTL=12*3600e3;
+const ST_KEY="wildcams-status-v1", ST_TTL=Infinity;  /* results stay until the cam is checked again */
 let STATUS={}; try{STATUS=JSON.parse(localStorage.getItem(ST_KEY)||"{}")||{}}catch(e){STATUS={}}
 function saveStatus(){try{localStorage.setItem(ST_KEY,JSON.stringify(STATUS))}catch(e){}}
 function setStatus(c,s){STATUS[c.key]={s,t:Date.now()};saveStatus();}
+function checkedAt(c){const r=STATUS[c.key]; if(!r)return ""; const d=new Date(r.t); return `${d.getMonth()+1}/${d.getDate()}`;}
 function statusOf(c){const r=STATUS[c.key]; if(!r||Date.now()-r.t>ST_TTL)return null; return r.s;}
 const isOff=c=>{const s=statusOf(c);return s==="dead"||s==="stalled"};
 
@@ -561,8 +575,8 @@ const FILTERS=[
 ];
 let filter="all", query="", dayFirst=true;
 let selected=(CAMS.find(c=>c.title.startsWith("NamibiaCam"))||CAMS[0]).id;
-let hideOff=true; try{hideOff=localStorage.getItem("wildcams-hideoff")!=="0"}catch(e){}
-const shown=c=>!(hideOff&&isOff(c));
+let view="live";   /* "live" = the main list, "dead" = the failed list */
+const shown=c=>view==="dead"?isOff(c):!isOff(c);
 
 /* ---------- sun & time ---------- */
 function subsolar(d=new Date()){
@@ -625,7 +639,8 @@ FILTERS.forEach(f=>{
   chips.appendChild(b);
 });
 document.getElementById("sortBtn").onclick=()=>{dayFirst=!dayFirst;render()};
-document.getElementById("hideBtn").onclick=()=>{hideOff=!hideOff; try{localStorage.setItem("wildcams-hideoff",hideOff?"1":"0")}catch(e){} render();};
+document.getElementById("vLive").onclick=()=>{view="live";render();};
+document.getElementById("vDead").onclick=()=>{view="dead";render();};
 document.getElementById("q").addEventListener("input",e=>{query=e.target.value.trim().toLowerCase();render()});
 
 function esc(s){return String(s??"").replace(/[&<>"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]))}
@@ -702,7 +717,16 @@ function render(){
   document.getElementById("sortBtn").textContent=dayFirst?"白天優先":"依地區";
   document.getElementById("count").textContent=`直播清單・${items.length}`;
   const ul=document.getElementById("list"); ul.innerHTML="";
-  if(!items.length) ul.innerHTML=`<li class="empty">沒有符合的直播，換個關鍵字試試。</li>`;
+  const offAll=CAMS.filter(isOff);
+  if(view==="dead"){
+    const bar=document.createElement("li"); bar.className="deadbar";
+    bar.innerHTML=offAll.length
+      ? `<p>檢查時沒播出畫面的直播會放在這裡。重新檢查後能播的，會自動加回直播清單。</p><button class="go" id="recheck">重新檢查這 ${offAll.filter(c=>c.embed).length} 個</button>`
+      : `<p>目前沒有失效的直播。</p>`;
+    ul.appendChild(bar);
+    const rb=bar.querySelector("#recheck"); if(rb) rb.onclick=()=>startScan("dead");
+  }
+  if(!items.length && !(view==="dead"&&!offAll.length)){ const e=document.createElement("li"); e.className="empty"; e.textContent=view==="dead"?"失效清單裡沒有符合的直播。":"沒有符合的直播，換個關鍵字試試。"; ul.appendChild(e); }
   items.forEach(c=>{
     const li=document.createElement("li");
     const day=isDay(c);
@@ -710,13 +734,15 @@ function render(){
     li.innerHTML=`<button class="cam${c.star?" star":""}${c.id===selected?" sel":""}${isOff(c)?" off":""}">
       <span class="sw"></span>
       <span><span class="t">${esc(c.title)}${c.embed?"":' <span class="ext">外連</span>'}</span><br><span class="w">${esc(c.place)}</span></span>
-      <span class="tm">${localTime(c.tz)}<br>${st==="ok"?'<span class="st ok">● 在播</span>':isOff(c)?'<span class="st bad">已失效</span>':(day?"白天":"夜晚")}</span></button>`;
+      <span class="tm">${localTime(c.tz)}<br>${st==="ok"?'<span class="st ok">● 在播</span>':isOff(c)?`<span class="st bad">${checkedAt(c)} 失效</span>`:(day?"白天":"夜晚")}</span></button>`;
     li.firstElementChild.onclick=()=>select(c.id,true);
     ul.appendChild(li);
   });
-  const offN=CAMS.filter(isOff).length;
-  const hb=document.getElementById("hideBtn"); hb.hidden=!offN; hb.textContent=hideOff?`顯示失效的 ${offN} 個`:`隱藏失效的 ${offN} 個`;
-  document.getElementById("totalN").textContent=CAMS.filter(shown).length;
+  document.getElementById("nLive").textContent=CAMS.length-offAll.length;
+  document.getElementById("nDead").textContent=offAll.length;
+  document.getElementById("vLive").setAttribute("aria-selected",view==="live");
+  document.getElementById("vDead").setAttribute("aria-selected",view==="dead");
+  document.getElementById("totalN").textContent=CAMS.length-offAll.length;
   dots.classed("gone",d=>!shown(d)).classed("dim",d=>shown(d)&&!matches(d)).classed("sel",d=>d.id===selected).classed("off",d=>isOff(d));
   dots.filter(d=>d.id===selected).raise();
 }
@@ -725,27 +751,31 @@ function render(){
 const scanBtn=document.getElementById("scanBtn"), panel=document.getElementById("scan");
 let scan=null;
 if(LOCAL) scanBtn.hidden=true;
-scanBtn.onclick=()=>{ if(scan&&scan.running) {panel.hidden=false; return;} startScan(); };
+scanBtn.onclick=()=>{ panel.hidden=false; updScan(); };
+document.querySelectorAll("[data-scan]").forEach(b=>b.onclick=()=>startScan(b.dataset.scan));
 document.getElementById("scanClose").onclick=()=>{ stopScan(); panel.hidden=true; };
-document.getElementById("scanStop").onclick=()=>{ scan&&scan.running?stopScan():startScan(); };
+document.getElementById("scanStop").onclick=()=>{ if(scan&&scan.running) stopScan(); else startScan(scan?scan.mode:"new"); };
 document.getElementById("scanCopy").onclick=async()=>{
   const lines=CAMS.filter(isOff).map(c=>`${c.title} | ${c.key}`).join("\n")||"（沒有失效的直播）";
   const msg=document.getElementById("scanMsg");
   try{ await navigator.clipboard.writeText(lines); msg.textContent="已複製失效清單，可以貼給 Claude 換掉。"; }
   catch(e){ const ta=document.getElementById("scanOut"); ta.hidden=false; ta.value=lines; ta.select(); msg.textContent="請按 Ctrl+C 複製下面的清單。"; }
 };
-function startScan(){
-  const queue=CAMS.filter(c=>c.embed);
-  scan={running:true,queue:[...queue],retry:[],total:queue.length,done:0,stops:[],active:new Map()};
-  panel.hidden=false; document.getElementById("scanStop").textContent="暫停";
-  document.getElementById("scanMsg").textContent="每個直播試播最多 20 秒，請讓這個分頁保持開著。";
+function startScan(mode){
+  if(scan&&scan.running) stopScan();
+  const pick={all:c=>true, dead:c=>isOff(c), new:c=>statusOf(c)===null}[mode]||(c=>true);
+  const queue=CAMS.filter(c=>c.embed&&pick(c));
+  scan={mode,running:true,queue:[...queue],retry:[],total:queue.length,done:0,revived:0,stops:[],active:new Map()};
+  panel.hidden=false; document.getElementById("scanStop").textContent="暫停"; document.getElementById("scanStop").hidden=false;
+  if(!queue.length){ scan.running=false; document.getElementById("scanMsg").textContent=mode==="new"?"全部都檢查過了。可以選「檢查全部」重新來一次。":"沒有需要檢查的直播。"; updScan(); return; }
+  document.getElementById("scanMsg").textContent=mode==="dead"?"重新試播失效清單，能播的會自動加回直播清單。":"每個直播最多試播 20 秒，請讓這個分頁留在前景。";
   for(let i=0;i<3;i++) runSlot(i);
   updScan();
 }
 function stopScan(){
   if(!scan)return; scan.running=false; scan.stops.forEach(f=>f()); scan.stops=[];
   document.querySelectorAll(".slot").forEach(s=>s.innerHTML="");
-  document.getElementById("scanStop").textContent="重新檢查"; updScan();
+  document.getElementById("scanStop").textContent="繼續"; updScan();
 }
 function runSlot(i){
   const slot=document.querySelectorAll(".slot")[i];
@@ -753,13 +783,13 @@ function runSlot(i){
   if(document.hidden){ setTimeout(()=>runSlot(i),1000); return; }   /* background tabs block autoplay */
   let c=scan.queue.shift(), second=false;
   if(!c && scan.retry.length){ c=scan.retry.shift(); second=true; }
-  if(!c){ slot.innerHTML=""; if(!document.querySelector(".slot iframe")){scan.running=false; document.getElementById("scanStop").textContent="重新檢查"; document.getElementById("scanMsg").textContent="檢查完成。失效的已自動隱藏，結果保留 12 小時。"; updScan();} return; }
+  if(!c){ slot.innerHTML=""; if(!document.querySelector(".slot iframe")){scan.running=false; document.getElementById("scanStop").hidden=true; document.getElementById("scanMsg").textContent=scan.mode==="dead"?`重新檢查完成，救回 ${scan.revived} 個，已加回直播清單。`:"檢查完成。沒播出畫面的已移到「失效清單」。"; updScan();} return; }
   slot.innerHTML=`<iframe src="${esc(apiSrc(c))}" allow="autoplay; encrypted-media" referrerpolicy="strict-origin-when-cross-origin" title="檢查 ${esc(c.title)}"></iframe><span>${second?"重試・":""}${esc(c.title)}</span>`;
   const stop=probe(slot.querySelector("iframe"),s=>{
     scan.active.delete(i); slot.innerHTML="";
     if(s==="interrupted"){ (second?scan.retry:scan.queue).unshift(c); }
     else if(s==="stalled" && !second){ scan.retry.push(c); }
-    else { setStatus(c,s); scan.done++; render(); }
+    else { if(scan.mode==="dead"&&s==="ok") scan.revived++; setStatus(c,s); scan.done++; render(); }
     updScan();
     setTimeout(()=>runSlot(i),300);
   },second?30000:20000);
@@ -779,7 +809,10 @@ function updScan(){
   const ok=emb.filter(c=>statusOf(c)==="ok").length, off=emb.filter(isOff).length;
   const total=scan?scan.total:emb.length, done=scan?scan.done:ok+off;
   document.getElementById("scanBar").style.width=(100*done/total)+"%";
-  document.getElementById("scanNum").innerHTML=`已檢查 <b>${done}</b> / ${total}　在播 <b class="okc">${ok}</b>　失效 <b class="badc">${off}</b>`;
+  const unchecked=emb.filter(c=>statusOf(c)===null).length;
+  document.getElementById("scanNum").innerHTML=(scan?`這次已檢查 <b>${done}</b> / ${total}${scan.mode==="dead"?`　救回 <b class="okc">${scan.revived}</b>`:""}<br>`:"")+`在播 <b class="okc">${ok}</b>　失效 <b class="badc">${off}</b>　未檢查 <b>${unchecked}</b>`;
+  document.querySelector('[data-scan="new"]').textContent=`檢查還沒檢查的（${unchecked}）`;
+  document.querySelector('[data-scan="dead"]').textContent=`重新檢查失效清單（${off}）`;
 }
 
 function tick(){
