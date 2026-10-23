@@ -127,6 +127,8 @@ footer p{margin:0 0 8px}
 .st.bad{color:#c2410c;font-family:var(--f-body)}
 .dot.off circle.core{fill:var(--panel);stroke:var(--muted);stroke-width:1.5px}
 .dot.off circle.halo{display:none}
+.dot.gone{display:none}
+.abtns{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
 .scan{position:fixed;z-index:20;right:calc(16px + env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));width:min(360px,calc(100vw - 32px));background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px 14px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
 .shead{display:flex;justify-content:space-between;align-items:center}
 .x{font:inherit;font-size:20px;line-height:1;background:none;border:0;color:var(--muted);cursor:pointer;padding:2px 6px}
@@ -149,7 +151,7 @@ footer a{color:var(--accent)}
   <header>
     <div>
       <h1>野生直播地圖</h1>
-      <p class="sub">200 個動物直播，點地圖上的點或清單就直接播放。金色的點是有名字的明星動物；陰影是此刻地球上的夜晚，挑還在白天的地方比較容易看到動物。</p>
+      <p class="sub"><span id="totalN">377</span> 個動物直播，點地圖上的點或清單就直接播放。金色的點是有名字的明星動物；陰影是此刻地球上的夜晚，挑還在白天的地方比較容易看到動物。</p>
     </div>
     <div class="utc">台北時間 <b id="tpe">--:--</b><br>UTC <span id="utc">--:--</span></div>
   </header>
@@ -176,7 +178,7 @@ footer a{color:var(--accent)}
       <div class="detail" id="detail" aria-live="polite"></div>
     </section>
     <aside>
-      <div class="ahead"><h3 id="count">直播清單</h3><button class="toggle" id="sortBtn">白天優先</button></div>
+      <div class="ahead"><h3 id="count">直播清單</h3><span class="abtns"><button class="toggle" id="hideBtn" hidden></button><button class="toggle" id="sortBtn">白天優先</button></span></div>
       <ul class="list" id="list"></ul>
     </aside>
   </div>
@@ -410,6 +412,184 @@ const CAMS_RAW = [
 // ---------- 第二批：大洋洲 ----------
 ["綠島珊瑚魚","澳洲昆士蘭・大堡礁",-16.76,145.97,"Australia/Brisbane","ocean","OwBXFH6T60U"],
 ["奧瑪魯小藍企鵝","紐西蘭・奧瑪魯",-45.11,170.98,"Pacific/Auckland","nest","IKhGWZeCns8",null,null,"世界上最小的企鵝，傍晚成群上岸。"],
+// ---------- 第三批 ----------
+["NEFL 老鷹巢・鏡頭 1","美國佛羅里達東北部",30.3,-81.65,"America/New_York","nest","GmQY04JqVj8"],
+["NEFL 老鷹巢・鏡頭 2","美國佛羅里達東北部",30.32,-81.63,"America/New_York","nest","5Yjya9aR9Hg"],
+["Winter Park 老鷹巢","美國佛羅里達・溫特帕克",28.6,-81.34,"America/New_York","nest","Lo1l2aD-CCo"],
+["西南佛州老鷹・池塘視角","美國佛羅里達・麥爾茲堡",26.7,-81.86,"America/New_York","nest","Wnma2wKsI-E"],
+["西南佛州老鷹・巢特寫","美國佛羅里達・麥爾茲堡",26.72,-81.82,"America/New_York","nest","BbDdI0MDMl8"],
+["明尼蘇達 DNR 老鷹巢","美國明尼蘇達",45.0,-93.2,"America/Chicago","nest","NOMxO2Qp7QQ"],
+["Hanover 老鷹巢","美國賓州・漢諾威",39.8,-76.98,"America/New_York","nest","vW1RbUVME6Y"],
+["Hellgate 魚鷹巢","美國蒙大拿・米蘇拉",46.87,-113.99,"America/Denver","nest","J7HO0dkkomE",null,"雌鳥 Iris，可能是世界上最老的野生魚鷹之一。","10 月 Iris 已飛去南方過冬，4 月回來。"],
+["Boulder 魚鷹巢","美國科羅拉多・朗蒙特",40.16,-105.12,"America/Denver","nest","ch:UCJvWkll6vKb4u5E7JQvsH1A"],
+["Dunrovin 牧場魚鷹巢","美國蒙大拿・洛洛",46.75,-114.1,"America/Denver","nest",null,"https://www.youtube.com/DaysAtDunrovin/live"],
+["Nimali 營地","坦尚尼亞・塔蘭吉雷",-3.9,36.0,"Africa/Dar_es_Salaam","wild","EbdnE0I_Aoo",null,null,"塔蘭吉雷以大象群出名。"],
+["Mpala 河馬與鱷魚","肯亞・萊基皮亞",0.28,36.89,"Africa/Nairobi","wild","7x5kRo1B84Y"],
+["Mpala 動物瞭望","肯亞・萊基皮亞",0.31,36.92,"Africa/Nairobi","wild","O8xVFhgEv6Q"],
+["Campi ya Kanzi 水坑","肯亞・丘魯丘陵",-2.65,37.85,"Africa/Nairobi","wild","lPVH-2QMgtk",null,null,"背景天氣好時看得到吉力馬札羅山。"],
+["Moody Gardens 企鵝","美國德州・加爾維斯頓",29.27,-94.85,"America/Chicago","zoo","ma6updfezjE"],
+["太平洋水族館・水母","美國加州・長灘",33.763,-118.193,"America/Los_Angeles","ocean","IYG9fnz40-E"],
+["溫哥華水族館・水母","加拿大卑詩・溫哥華",49.3,-123.13,"America/Vancouver","ocean","ZrNYyirEMiw"],
+["辛辛那提動物園大象","美國俄亥俄・辛辛那提",39.145,-84.51,"America/New_York","zoo","XjDTb1YItL4"],
+["聖路易動物園","美國密蘇里・聖路易",38.637,-90.288,"America/Chicago","zoo","Q877jzdah-A"],
+["New Liskeard 餵食器","加拿大安大略・新利斯卡德",47.51,-79.67,"America/Toronto","nest","OI8QHtWDYME"],
+["Ajax 後院餵食器","加拿大安大略・阿賈克斯",43.85,-79.03,"America/Toronto","nest","vH9Y6Lksl3c"],
+["安大略北方森林餵食器","加拿大安大略・曼尼圖瓦奇",49.12,-85.84,"America/Toronto","nest","WzEw6TbpbXU",null,null,"康乃爾鳥類實驗室的北方鳥類鏡頭，冬天常有松雀、松鴉。"],
+["Erfurt 鳥屋","德國・艾福特",50.98,11.03,"Europe/Berlin","nest","Mc1fsy1rxYY"],
+["丹麥鳥巢箱（Morten Hilmer）","丹麥",56.0,9.5,"Europe/Copenhagen","nest","oSZJWoetFQ4"],
+["北海道松鼠與狐狸","日本北海道",43.0,143.0,"Asia/Tokyo","wild","lsSpv8YVA4c",null,null,"蝦夷松鼠、野鳥，晚上偶爾有北狐。"],
+["北海道野鳥餵食台","日本北海道",43.06,141.6,"Asia/Tokyo","nest","6XWmZs7Ygt4"],
+["鄂霍次克野鳥與日出","日本北海道・鄂霍次克海岸",44.0,144.27,"Asia/Tokyo","nest","J0idrPA8sp4"],
+["雪國野鳥餵食台","日本（雪國，大致位置）",37.5,138.9,"Asia/Tokyo","nest","Kn6HPHWMA_0"],
+["北海道自動餵食器","日本北海道",42.9,143.2,"Asia/Tokyo","nest","2H3ZMZmcUP0"],
+["溫泉旅館看板貓 Omochi","日本（大致位置）",36.0,138.0,"Asia/Tokyo","pet","wkPdbUQYrdY",null,"看板貓「おもち」（Omochi）"],
+["Kat's River View","美國阿拉斯加・卡特邁",58.555,-155.79,"America/Anchorage","wild","cTsjMtjRLCo"],
+["Naknek 河","美國阿拉斯加・卡特邁",58.73,-157.0,"America/Anchorage","wild","mfm9cjg6Khw"],
+["Great Spirit Bluff 遊隼","美國明尼蘇達・拉克雷森特",43.83,-91.3,"America/Chicago","nest","ghlf72wkS2A"],
+["俄亥俄後院野生動物","美國俄亥俄",40.4,-82.9,"America/New_York","wild","b6-zNf3BGy0"],
+["印第安納餵食器","美國印第安納",39.8,-86.2,"America/Indiana/Indianapolis","nest","GMqQI_l-w-k"],
+["緬因餵食器","美國緬因",44.3,-69.8,"America/New_York","nest","fOn4Wj3uTyI"],
+["佛州餵食器","美國佛羅里達",28.0,-82.0,"America/New_York","nest","JCyUMi9ocsQ"],
+["佛州東部鳴角鴞巢箱","美國佛羅里達",28.5,-81.5,"America/New_York","nest","Sra_hMuqjKA"],
+["Chesapeake 大藍鷺巢","美國馬里蘭・肯特島",38.98,-76.31,"America/New_York","nest","WlFi0bjVxTo"],
+["Riverside 大藍鷺群巢","美國明尼蘇達・明尼亞波利斯",45.0,-93.27,"America/Chicago","nest",null,"https://www.youtube.com/@xcelenergyriversidebirdcam12/streams"],
+["Stocker's Lake 鷺群","英國英格蘭・里克曼斯沃思",51.62,-0.49,"Europe/London","nest","oGMAzqt0WJw"],
+["丹麥鳥巢箱（第二路）","丹麥",56.05,9.6,"Europe/Copenhagen","nest","i-8AuGHdEoI"],
+["瑞典寒鴉巢箱","瑞典",59.3,18.1,"Europe/Stockholm","nest","-rkhRU6xvY0"],
+["Runde 海鸚","挪威・倫德島",62.4,5.62,"Europe/Oslo","nest","JqrOjNBDcVw",null,null,"海鸚 4–8 月在崖上繁殖。"],
+["挪威餵食器","挪威",60.0,10.5,"Europe/Oslo","nest","KeKrFyF0BXk"],
+["BadgerWood 獾","英國英格蘭・峰區",53.3,-1.75,"Europe/London","wild","Y_Mkegk-K4E",null,null,"晚上有獾、狐狸和貓頭鷹。"],
+["康瓦爾獾餵食站","英國英格蘭・康瓦爾",50.3,-4.9,"Europe/London","wild","XsykGNNG3yA"],
+["英國灰林鴞與紅隼","英國（大致位置）",52.0,-1.0,"Europe/London","nest","z-lG3ro832c"],
+["英國藍山雀巢箱","英國（大致位置）",52.5,-1.8,"Europe/London","nest","oo3HLmkX8UU",null,null,"藍山雀 4–6 月育雛，冬天常進巢箱過夜。"],
+["雞舍直播","美國（位置未公開）",39.5,-97.0,"America/Chicago","pet","CrV2BgQFFnM"],
+["山羊直播","美國（位置未公開）",38.5,-95.5,"America/Chicago","pet","djzan4GPhQM"],
+["幼犬直播","美國（位置未公開）",40.5,-99.0,"America/Chicago","pet","a9rXR0iqgxk"],
+["服務犬幼犬直播","美國（位置未公開）",37.8,-96.2,"America/Chicago","pet","c2Z4xLeUexk"],
+["柯基幼犬直播","美國（位置未公開）",41.2,-96.0,"America/Chicago","pet","y8JHCSgS0wI"],
+["黑海水下","黑海（大致位置）",43.2,28.0,"Europe/Sofia","ocean","sB6Ltt9NsME"],
+["Forest Nook 森林餵食台","波蘭・日維茨",49.69,19.19,"Europe/Warsaw","nest","KVE-Z8qwcMg",null,null,"山區森林，除了鳥也常有松鼠和鹿。"],
+["Mountain Nook 山區餵食台","波蘭",49.6,19.3,"Europe/Warsaw","nest","Dl9hwNYDz9I"],
+["Senyati 水坑","波札那・卡薩內",-17.83,25.2,"Africa/Gaborone","wild","EdDdTrahHjI",null,null,"乾季時大象成群來喝水。"],
+["Kuzuma 營地水坑（第二路）","波札那・丘比附近",-17.87,25.22,"Africa/Gaborone","wild","FEdZ87fxV2w"],
+["Twin Pan 觀察屋","辛巴威（大致位置）",-18.7,26.9,"Africa/Harare","wild","2EZavJUNdLI"],
+["Satara 營地水坑","南非・克魯格國家公園",-24.39,31.78,"Africa/Johannesburg","wild","EZGdVets4fQ"],
+["澳洲野鳥 24 小時","澳洲（大致位置）",-33.9,151.0,"Australia/Sydney","nest","NyDwtGmf-hg"],
+["澳洲後院餵食器","澳洲（大致位置）",-27.5,152.9,"Australia/Brisbane","nest","xBDd2YNiDYA"],
+["澳洲彩虹鸚鵡餵食台","澳洲（大致位置）",-28.0,153.3,"Australia/Brisbane","nest","62WdP7bxg0M"],
+["夏威夷座頭鯨保護區（第二路）","美國夏威夷・茂宜島",20.78,-156.45,"Pacific/Honolulu","ocean","igNhSkyvo0Q"],
+["海獅海灘","加拿大卑詩（大致位置）",49.5,-124.7,"America/Vancouver","ocean","-uooI2satIQ"],
+["托雷多動物園・老虎","美國俄亥俄・托雷多",41.62,-83.58,"America/New_York","zoo","N4RcuGqsJgM"],
+["托雷多動物園・禿鷲","美國俄亥俄・托雷多",41.621,-83.582,"America/New_York","zoo","pZQFUvpWa88"],
+["托雷多動物園・棕熊","美國俄亥俄・托雷多",41.619,-83.579,"America/New_York","zoo","vAwx88x0ULI"],
+["托雷多動物園・海豹與海獅","美國俄亥俄・托雷多",41.622,-83.577,"America/New_York","zoo","zj0rCN8oUJs"],
+["托雷多動物園・太平洋珊瑚礁","美國俄亥俄・托雷多",41.618,-83.581,"America/New_York","ocean","VipOpRl4c8E"],
+["托雷多動物園・水獺","美國俄亥俄・托雷多",41.623,-83.583,"America/New_York","zoo","QaD50o0hq6s"],
+["孟菲斯動物園大象","美國田納西・孟菲斯",35.15,-89.99,"America/Chicago","zoo","YTIpXdqBQmI"],
+["休士頓動物園大象","美國德州・休士頓",29.715,-95.39,"America/Chicago","zoo","Gq2Vmn6THvA"],
+["Skomer 島海鸚群","英國威爾斯・斯科默島",51.74,-5.3,"Europe/London","nest","Cj4bM-OoW9g"],
+["Skomer 島海鸚洞穴","英國威爾斯・斯科默島",51.735,-5.29,"Europe/London","nest","0g9hyq_z_Qw"],
+["Onguma 水坑","納米比亞・艾托沙東側",-18.73,17.05,"Africa/Windhoek","wild","yuIm1V7Ne7I"],
+["Kambaku 水坑","南非・Timbavati",-24.3,31.3,"Africa/Johannesburg","wild","n0y1ZOwrDQI"],
+["Knepp 白鸛巢","英國英格蘭・西薩塞克斯",50.97,-0.36,"Europe/London","nest","cbJLmCBa4_4",null,null,"白鸛在英國消失幾百年後，在這裡重新繁殖。"],
+["Tudela 白鸛巢","西班牙・圖德拉",42.06,-1.6,"Europe/Madrid","nest","T0k9HSuuo-k"],
+["紫崖燕群巢","美國賓州・伊利",42.1,-80.1,"America/New_York","nest",null,"https://www.youtube.com/c/PurpleMartinConservation/live"],
+["Sauces 白頭海鵰巢","美國加州・聖克魯斯島",34.05,-119.85,"America/Los_Angeles","nest","rnTsOesC6hE"],
+["Hornby 島白頭海鵰","加拿大卑詩・霍恩比島",49.52,-124.67,"America/Vancouver","nest","w2ImwCSLQ2E"],
+["Delta 2 東白頭海鵰巢","加拿大卑詩・三角洲市",49.08,-123.05,"America/Vancouver","nest","8v8FYspCscU"],
+["Delta 2 白頭海鵰巢","加拿大卑詩・三角洲市",49.09,-123.07,"America/Vancouver","nest","9Xz-odytjys"],
+["White Rock 北白頭海鵰巢","加拿大卑詩・白石鎮",49.03,-122.8,"America/Vancouver","nest","y4MODUjRYjY"],
+["Harrison Mills 北白頭海鵰巢","加拿大卑詩・哈里森",49.25,-121.95,"America/Vancouver","nest","iWm9S4TjSXk",null,null,"冬天上千隻白頭海鵰聚集在這一帶吃鮭魚。"],
+["法拉隆群島","美國加州・舊金山外海",37.7,-123.0,"America/Los_Angeles","ocean","fHb0eB9RUgA",null,null,"海鳥、海獅、象鼻海豹的繁殖地。"],
+["胡拉谷鳥類 1 號鏡頭","以色列・胡拉自然保護區",33.07,35.6,"Asia/Jerusalem","nest","-AmaIGvwt1c",null,null,"非洲與歐亞候鳥遷徙的中繼站，秋冬有數萬隻灰鶴。"],
+["胡拉谷鳥類 2 號鏡頭","以色列・胡拉谷",33.1,35.61,"Asia/Jerusalem","nest","hH4r1mz-giQ"],
+["加州狼保育中心","美國加州・朱利安",33.07,-116.6,"America/Los_Angeles","zoo","mTWznGfOZdA"],
+["Dyfi 魚鷹巢","英國威爾斯・Dyfi",52.57,-3.93,"Europe/London","nest","ch:UCk70QelhKG9mVuj7jN4I5Cg",null,"雄鳥 Idris 和雌鳥 Telyn","10 月魚鷹已飛去西非，3 月底回來。"],
+["Kielder 魚鷹 7 號巢","英國英格蘭・基爾德",55.2,-2.5,"Europe/London","nest","WOP13CW1pxU"],
+["Loch Doon 魚鷹","英國蘇格蘭・艾爾郡",55.25,-4.4,"Europe/London","nest","a7Aocq3fybM"],
+["Loch Arkaig 魚鷹 2 號巢","英國蘇格蘭高地",56.97,-5.12,"Europe/London","nest","ch:UCJONGed182uY9_TVRp1qiMg",null,"雌鳥 Dorcha"],
+["Loch Arkaig 魚鷹 1 號巢","英國蘇格蘭高地",56.95,-5.08,"Europe/London","nest",null,"https://www.youtube.com/c/woodlandtrust/live"],
+["拉特蘭 Lagoon 4 魚鷹（特寫）","英國英格蘭・拉特蘭湖",52.66,-0.66,"Europe/London","nest","ch:UCJ8DHJ5VCVLm-o_Wo65VBaA"],
+["拉特蘭 Lagoon 4 魚鷹（廣角）","英國英格蘭・拉特蘭湖",52.655,-0.65,"Europe/London","nest","2uQWczlBh3s"],
+["阿拉巴馬野生動物鏡頭","美國阿拉巴馬（大致位置）",32.8,-86.8,"America/Chicago","nest","TkWH0yUzl94"],
+["Duke Farms 老鷹巢","美國紐澤西・希爾斯伯勒",40.55,-74.63,"America/New_York","nest",null,"https://www.youtube.com/user/dukefarmsfdn/live"],
+["Berry College 老鷹巢","美國喬治亞・羅馬市",34.29,-85.19,"America/New_York","nest","rOuXHso-HNo"],
+["Dulles Greenway 老鷹巢（4K）","美國維吉尼亞・利斯堡",39.03,-77.48,"America/New_York","nest","gYMvM8kkKI0"],
+["Dulles Greenway 老鷹巢（變焦）","美國維吉尼亞・利斯堡",39.04,-77.5,"America/New_York","nest","3F4rF_OE8zo"],
+["Dulles Greenway 老鷹巢（側面）","美國維吉尼亞・利斯堡",39.02,-77.47,"America/New_York","nest","btSi55sbif0"],
+["Traverse City 老鷹巢・鏡頭 2","美國密西根",44.77,-85.6,"America/Detroit","nest","rWQEKZGcius"],
+["Barnegat Light 魚鷹巢","美國紐澤西・巴尼加特燈塔",39.76,-74.11,"America/New_York","nest","VkadNzxg-R4",null,"Duke 和 Daisy"],
+["Oyster Bay 魚鷹巢","美國紐約・長島",40.87,-73.53,"America/New_York","nest","ZzW9-t5bYJE"],
+["Colonial Beach 魚鷹巢","美國維吉尼亞",38.25,-76.97,"America/New_York","nest",null,"https://www.youtube.com/@virginiaospreyfoundation/streams"],
+["Mashpee 魚鷹巢","美國麻州・鱈魚角",41.62,-70.48,"America/New_York","nest",null,"https://www.youtube.com/@MashpeeOspreyCam-SeasonTwo/streams"],
+["蒙特雷灣海面","美國加州・蒙特雷",36.6,-121.89,"America/Los_Angeles","ocean","fVa6-zCBR7A"],
+["39 號碼頭海獅","美國加州・舊金山",37.809,-122.41,"America/Los_Angeles","ocean","Ha50XrIbOHI",null,null,"上百頭加州海獅在碼頭浮台上曬太陽。"],
+["Piedras Blancas 象鼻海豹","美國加州・聖西蒙",35.66,-121.26,"America/Los_Angeles","ocean","ch:UCiwAct6MquO7RhygMVtnjIw",null,null,"10–11 月幼海豹回岸，12–3 月是繁殖季。"],
+["清水海洋水族館","美國佛羅里達・清水市",27.98,-82.8,"America/New_York","ocean","Pp_YnLnywe0"],
+["Hwange Safari Lodge 水坑","辛巴威・萬基",-18.62,26.5,"Africa/Harare","wild","DhCfRI7XssU"],
+["Tau 水坑","南非・馬迪奎",-24.75,26.25,"Africa/Johannesburg","wild","OvSyNkHblR4"],
+["Lubee 巨狐蝠","美國佛羅里達・蓋恩斯維爾",29.782,-82.476,"America/New_York","zoo","ojBaem3bwsE"],
+["BatTV 澳洲狐蝠","澳洲（大致位置）",-27.4,152.95,"Australia/Brisbane","zoo","ch:UCQPAakTf8atrdkq7QHkfn2w",null,null,"救援的澳洲狐蝠。"],
+["Turpentine Creek 老虎 Max","美國阿肯色・尤里卡斯普林斯",36.33,-93.72,"America/Chicago","zoo","PcAOecvAh1U",null,"老虎 Max"],
+["The Big Cat Sanctuary 老虎","英國英格蘭・肯特",51.15,0.6,"Europe/London","zoo","eApuN4jmvS4"],
+["塔隆加動物園水豚","澳洲雪梨",-33.843,151.241,"Australia/Sydney","zoo","LUg6CqD567k"],
+["哥斯大黎加水果餵食台","哥斯大黎加",10.3,-84.4,"America/Costa_Rica","nest","BHdjKWOlkLA"],
+["Iatan 發電廠遊隼","美國密蘇里・韋斯頓",39.45,-94.98,"America/Chicago","nest","rmB3QZlALMY"],
+["南非花園餵食器（戴勝、犀鳥）","南非（大致位置）",-25.05,31.1,"Africa/Johannesburg","nest","JtRWAKUmd2U"],
+["南非餵食器與野生動物","南非（大致位置）",-25.1,31.0,"Africa/Johannesburg","nest","Rbr0BNZTJ28",null,null,"晚上偶爾有嬰猴和麝貓。"],
+["愛沙尼亞鵰鴞巢","愛沙尼亞",58.5,25.5,"Europe/Tallinn","nest","1jw2BUxDdVg"],
+["愛沙尼亞金鵰巢","愛沙尼亞",58.8,26.0,"Europe/Tallinn","nest","ymcXNJ5ITos",null,"Kalju 和 Helju"],
+["愛沙尼亞黑鸛巢 2","愛沙尼亞",58.2,26.5,"Europe/Tallinn","nest","GvdF0EL1_kI"],
+["愛沙尼亞黑鸛巢 3","愛沙尼亞",58.0,25.8,"Europe/Tallinn","nest","Cf7hHiF25lw"],
+["愛沙尼亞小烏鵰巢","愛沙尼亞",58.3,25.0,"Europe/Tallinn","nest","djOFxXiaXLU"],
+["拉脫維亞自然基金會鳥巢","拉脫維亞・澤姆加萊",56.6,23.7,"Europe/Riga","nest","ch:UCIcQwgP2i-fEshMBclDJENw"],
+["Rühstädt 白鸛（NABU）","德國・布蘭登堡",52.92,11.87,"Europe/Berlin","nest","Y3QxFbYvm1k",null,null,"德國的「白鸛村」，春夏有幾十對白鸛。"],
+["Haßleben 白鸛巢","德國・圖林根",51.1,11.0,"Europe/Berlin","nest","xjHByRxRSkk"],
+["日本動物園（狐獴、水豚、小貓熊）","日本（大致位置）",35.0,137.0,"Asia/Tokyo","zoo","57nnW4zp73U"],
+["池田動物園水豚","日本岡山",34.69,133.92,"Asia/Tokyo","zoo","L4lf7aLInVg"],
+["明湖國小台灣藍鵲巢","台灣台北・內湖",25.08,121.6,"Asia/Taipei","nest","6qsczn1Q-WE",null,null,"春天育雛季直播，現在可能已經結束。"],
+["Greenville 長頸鹿穀倉","美國南卡羅來納",34.852,-82.388,"America/New_York","zoo","AIwsO8sB0LM"],
+["Anan 熊・3 號釣魚洞","美國阿拉斯加・蘭格爾",56.19,-131.87,"America/Sitka","wild","G839-Yj4Cvo"],
+["紅隼巢箱（第三路）","荷蘭",52.4,6.2,"Europe/Amsterdam","nest","nvqIFgNdbO4"],
+["Little Miami 老鷹巢","美國俄亥俄",39.3,-84.2,"America/New_York","nest","kHOdKaPsFk8"],
+["Iroquois 保護區老鷹巢","美國紐約・易洛魁國家野生動物保護區",43.12,-78.4,"America/New_York","nest","ogUiSSpNIs4"],
+["NCTC 老鷹巢","美國西維吉尼亞・謝潑茲敦",39.43,-77.8,"America/New_York","nest","AndubnPNA64"],
+["Wakefield 遊隼・巢內","英國英格蘭・韋克菲爾德",53.683,-1.497,"Europe/London","nest","6VLXJIceuec"],
+["Wakefield 遊隼・尖塔","英國英格蘭・韋克菲爾德",53.682,-1.5,"Europe/London","nest","y2wUAK1yvQE"],
+["St Chad's 遊隼巢箱","英國英格蘭・什魯斯伯里",52.71,-2.76,"Europe/London","nest","B2XKa9hxyfQ"],
+["墨爾本 367 Collins 遊隼","澳洲墨爾本",-37.815,144.966,"Australia/Melbourne","nest",null,"https://www.youtube.com/@367collinsfalcons/streams",null,"市中心大樓上的遊隼，8–12 月是繁殖季，現在正好。"],
+["FalconCam 遊隼・巢","澳洲新南威爾斯・奧蘭治",-33.28,149.1,"Australia/Sydney","nest","3KCFRoO6URs",null,null,"查爾斯特大學水塔上的遊隼，南半球 9–11 月育雛，現在正好。"],
+["FalconCam 遊隼・巢（第二路）","澳洲新南威爾斯・奧蘭治",-33.29,149.11,"Australia/Sydney","nest","MyOy7rHxwXA"],
+["FalconCam 遊隼・巢箱","澳洲新南威爾斯・奧蘭治",-33.27,149.09,"Australia/Sydney","nest","gnF7_gRHHMQ"],
+["國家麋鹿保護區","美國懷俄明・傑克遜",43.48,-110.76,"America/Denver","wild","_2rvoH5oDcg",null,null,"冬天上千頭麋鹿在這裡過冬。"],
+["Methow Valley 野生動物","美國華盛頓州",48.47,-120.18,"America/Los_Angeles","wild","NZHvIah7qFc"],
+["明尼蘇達河畔","美國明尼蘇達（大致位置）",46.0,-94.0,"America/Chicago","wild","4AFsXry2XQY"],
+["亞利桑那餵食器（橡樹啄木鳥）","美國亞利桑那（大致位置）",32.3,-110.8,"America/Phoenix","nest","H04VEYy5iMg"],
+["Farm Sanctuary 羊舍","美國紐約・沃特金斯格倫",42.383,-76.875,"America/New_York","pet","SnHke968zAA"],
+["Farm Sanctuary 牛群牧場","美國紐約・沃特金斯格倫",42.375,-76.865,"America/New_York","pet","dKFwk3MDu74"],
+["Dumpling 山","美國阿拉斯加・卡特邁",58.57,-155.75,"America/Anchorage","wild","uLgdUiT9WZQ"],
+["胖熊週直播","美國阿拉斯加・卡特邁",58.553,-155.776,"America/Anchorage","wild","55SkjR2X3gs"],
+["Moo Deng 24 小時（第二路）","泰國・考開放動物園",13.22,101.06,"Asia/Bangkok","zoo","1rzmVgy4gII",null,"Moo Deng"],
+["聖路易動物園（第二路）","美國密蘇里・聖路易",38.634,-90.292,"America/Chicago","zoo","b8RCVeXUYMY"],
+["海龜醫院","美國佛羅里達・馬拉松",24.71,-81.09,"America/New_York","ocean","ch:UC2Mt2dUIoghpEDqsuH8s-zQ",null,null,"救治受傷海龜的醫院，康復後放回大海。"],
+["Mavis 海龜救援池","美國佛羅里達・馬拉松",24.712,-81.088,"America/New_York","ocean","ebMk4Vlx0GE"],
+["底特律動物園","美國密西根・皇家橡樹",42.48,-83.15,"America/Detroit","zoo","Y9QF9yVNjWg"],
+["堪薩斯城動物園企鵝","美國密蘇里・堪薩斯城",39.0,-94.53,"America/Chicago","zoo","CLS2Uxxr8xk"],
+["堪薩斯城動物園企鵝（4K）","美國密蘇里・堪薩斯城",39.002,-94.528,"America/Chicago","zoo","jLt-7gublDM"],
+["亞利桑那蜂鳥","美國亞利桑那（大致位置）",31.5,-110.3,"America/Phoenix","nest","C-ghnI95GEs"],
+["西德州蜂鳥","美國德州西部（大致位置）",31.0,-103.5,"America/Chicago","nest","MCV2FnN9Wxs"],
+["德州餵食器 4K","美國德州（大致位置）",30.3,-97.7,"America/Chicago","nest","15RLA6LGOD8"],
+["艾倫蜂鳥巢 Sapphire","美國加州南部（大致位置）",33.7,-117.8,"America/Los_Angeles","nest","NwXz5j9ZSlo",null,"雌蜂鳥 Sapphire","巢只在育雛期有鳥，季節過了會是空巢。"],
+["育空野生動物鏡頭","加拿大育空・懷特霍斯",60.72,-135.05,"America/Whitehorse","wild",null,"https://www.youtube.com/@yukonwildlifecams/streams"],
+["英國花園野生動物","英國（大致位置）",53.0,-2.0,"Europe/London","wild","Z56l536K6zU"],
+["倉鴞、白鼬與紅隼","英國（大致位置）",52.2,-0.8,"Europe/London","nest","1laEOsLJLV4"],
+["蘇格蘭野生動物花園","英國蘇格蘭（大致位置）",57.0,-3.5,"Europe/London","wild",null,"https://www.youtube.com/c/ScottishWildlifeGarden/streams",null,"晚上常有松貂和獾。"],
+["法國花園餵食器","法國（大致位置）",46.5,2.5,"Europe/Paris","nest","iSINODBq7PE"],
+["法國山雀餵食器","法國（大致位置）",47.2,1.5,"Europe/Paris","nest",null,"https://www.youtube.com/c/M%C3%A9sangebleue/live"],
+["比利時刺蝟與鳥餵食站","比利時",50.8,4.4,"Europe/Brussels","wild","Yp-wHn47028",null,null,"晚上常有刺蝟。"],
+["比利時花園鳥","比利時",50.9,4.0,"Europe/Brussels","nest","sB2YwKHe5yg"],
+["魁北克後院鳥","加拿大魁北克（大致位置）",46.8,-71.2,"America/Toronto","nest","vB5s2-_fHNE"],
+["Porini 犀牛營地","肯亞・Ol Pejeta 保護區",0.0,36.9,"Africa/Nairobi","wild","5dhmXmUD1ZE",null,null,"Ol Pejeta 是東非最大的黑犀牛保護區。"],
 ];
 
 const LOCAL = location.protocol==="file:";
@@ -459,6 +639,8 @@ const FILTERS=[
   {k:"live",label:"確認在播",fn:c=>statusOf(c)==="ok"},
 ];
 let filter="all", query="", selected=CAMS[21].id, dayFirst=true;
+let hideOff=true; try{hideOff=localStorage.getItem("wildcams-hideoff")!=="0"}catch(e){}
+const shown=c=>!(hideOff&&isOff(c));
 
 /* ---------- sun & time ---------- */
 function subsolar(d=new Date()){
@@ -521,11 +703,13 @@ FILTERS.forEach(f=>{
   chips.appendChild(b);
 });
 document.getElementById("sortBtn").onclick=()=>{dayFirst=!dayFirst;render()};
+document.getElementById("hideBtn").onclick=()=>{hideOff=!hideOff; try{localStorage.setItem("wildcams-hideoff",hideOff?"1":"0")}catch(e){} render();};
 document.getElementById("q").addEventListener("input",e=>{query=e.target.value.trim().toLowerCase();render()});
 
 function esc(s){return String(s??"").replace(/[&<>"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]))}
 function matches(c){
   const f=FILTERS.find(x=>x.k===filter);
+  if(!shown(c))return false;
   if(!f.fn(c))return false;
   if(!query)return true;
   return (c.title+c.place+(c.names||"")+(c.note||"")).toLowerCase().includes(query);
@@ -589,7 +773,7 @@ function renderDetail(play){
 }
 
 function render(){
-  FILTERS.forEach(x=>{const b=document.getElementById("f-"+x.k); b.setAttribute("aria-pressed",x.k===filter); b.querySelector(".n").textContent=CAMS.filter(x.fn).length;});
+  FILTERS.forEach(x=>{const b=document.getElementById("f-"+x.k); b.setAttribute("aria-pressed",x.k===filter); b.querySelector(".n").textContent=CAMS.filter(c=>shown(c)&&x.fn(c)).length;});
   let items=CAMS.filter(matches);
   if(dayFirst) items=[...items].sort((a,b)=>isDay(b)-isDay(a));
   document.getElementById("sortBtn").textContent=dayFirst?"白天優先":"依地區";
@@ -607,7 +791,10 @@ function render(){
     li.firstElementChild.onclick=()=>select(c.id,true);
     ul.appendChild(li);
   });
-  dots.classed("dim",d=>!matches(d)).classed("sel",d=>d.id===selected).classed("off",d=>isOff(d));
+  const offN=CAMS.filter(isOff).length;
+  const hb=document.getElementById("hideBtn"); hb.hidden=!offN; hb.textContent=hideOff?`顯示失效的 ${offN} 個`:`隱藏失效的 ${offN} 個`;
+  document.getElementById("totalN").textContent=CAMS.filter(shown).length;
+  dots.classed("gone",d=>!shown(d)).classed("dim",d=>shown(d)&&!matches(d)).classed("sel",d=>d.id===selected).classed("off",d=>isOff(d));
   dots.filter(d=>d.id===selected).raise();
 }
 
@@ -641,7 +828,7 @@ function runSlot(i){
   const slot=document.querySelectorAll(".slot")[i];
   if(!scan.running) return;
   const c=scan.queue.shift();
-  if(!c){ slot.innerHTML=""; if(!document.querySelector(".slot iframe")){scan.running=false; document.getElementById("scanStop").textContent="重新檢查"; document.getElementById("scanMsg").textContent="檢查完成。結果會保留 12 小時，可用「確認在播」篩選。"; updScan();} return; }
+  if(!c){ slot.innerHTML=""; if(!document.querySelector(".slot iframe")){scan.running=false; document.getElementById("scanStop").textContent="重新檢查"; document.getElementById("scanMsg").textContent="檢查完成。失效的已自動隱藏，結果保留 12 小時。"; updScan();} return; }
   slot.innerHTML=`<iframe src="${esc(apiSrc(c))}" allow="autoplay; encrypted-media" referrerpolicy="strict-origin-when-cross-origin" title="檢查 ${esc(c.title)}"></iframe><span>${esc(c.title)}</span>`;
   const stop=probe(slot.querySelector("iframe"),s=>{
     setStatus(c,s); scan.done++; slot.innerHTML=""; updScan(); render();
