@@ -18,11 +18,6 @@
   --sans:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
   color-scheme:dark;
 }
-@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){
-  --abyss:#eef2f5; --chart:#ffffff; --chart2:#f3f6f9; --land:#d3dde6; --coast:#a9b9c8;
-  --ink:#0e1b2c; --muted:#5b6b7e; --line:rgba(14,27,44,.12);
-  --animal:#0f7f70; --star:#a26a00; --scenic:#b83a78; --bad:#c2410c;
-  --night:rgba(14,27,44,.16); --term:rgba(162,106,0,.6); color-scheme:light}}
 :root[data-theme="light"]{
   --abyss:#eef2f5; --chart:#ffffff; --chart2:#f3f6f9; --land:#d3dde6; --coast:#a9b9c8;
   --ink:#0e1b2c; --muted:#5b6b7e; --line:rgba(14,27,44,.12);
@@ -1555,7 +1550,7 @@ $("luckyBtn").onclick=()=>{
   if(from.length) select(from[Math.floor(Math.random()*from.length)].id,true,true);
 };
 $("themeBtn").onclick=()=>{
-  const cur=document.documentElement.dataset.theme||(matchMedia("(prefers-color-scheme: light)").matches?"light":"dark");
+  const cur=document.documentElement.dataset.theme||"dark";
   const nx=cur==="light"?"dark":"light"; document.documentElement.dataset.theme=nx; store.set("wildcams-theme",nx);
 };
 {const t=store.get("wildcams-theme"); if(t) document.documentElement.dataset.theme=t;}
