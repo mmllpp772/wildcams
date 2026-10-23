@@ -1,0 +1,39 @@
+name: probe
+on:
+  push:
+    paths: ['.github/workflows/probe.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Probe endpoints
+        run: |
+          mkdir out
+          probe(){ n=$1; u=$2; echo "== $n $u" >> out/report.txt
+            curl -sS -m 25 -L -H "Origin: https://mmllpp772.github.io" -H "Accept-Encoding: gzip" --compressed -D out/h_$n.txt -o out/b_$n.txt "$u" -w "code=%{http_code} size=%{size_download}\n" >> out/report.txt 2>&1
+            grep -i -E "^(access-control-allow-origin|content-type|x-ratelimit)" out/h_$n.txt >> out/report.txt
+            head -c 600 out/b_$n.txt >> out/report.txt; echo >> out/report.txt; echo >> out/report.txt; }
+          probe usgs "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_day.geojson"
+          probe gdacs_list "https://www.gdacs.org/gdacsapi/api/events/geteventlist/SEARCH?eventlist=TC&fromDate=2026-10-10&toDate=2026-10-24"
+          probe gdacs_map "https://www.gdacs.org/gdacsapi/api/events/geteventlist/MAP?eventtypes=TC"
+          probe nhc "https://www.nhc.noaa.gov/CurrentStorms.json"
+          probe jma "https://www.jma.go.jp/bosai/typhoon/data/targetTc.json"
+          probe opensky "https://opensky-network.org/api/states/all"
+          probe adsblol "https://api.adsb.lol/v2/point/25/121/250"
+          probe adsblol_all "https://api.adsb.lol/v2/all"
+          probe airplaneslive "https://api.airplanes.live/v2/point/25/121/250"
+          probe adsbfi "https://opendata.adsb.fi/api/v2/lat/25/lon/121/dist/250"
+          probe digitraffic "https://meri.digitraffic.fi/api/ais/v1/locations"
+          probe aishub "https://data.aishub.net/ws.php"
+          probe decapi "https://decapi.me/twitch/viewercount/alveussanctuary"
+          probe kystverket "https://kystdatahuset.no/ws/api/ais/positions/latest"
+          ls -la out >> out/report.txt
+      - name: Save report to probe branch
+        run: |
+          cd out && rm -f b_*.txt
+          git init -q && git checkout -q -b probe && git add report.txt h_*.txt
+          git -c user.name=probe -c user.email=probe@users.noreply.github.com commit -qm "probe report"
+          git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}" probe
