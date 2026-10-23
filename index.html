@@ -183,6 +183,45 @@ button{font:inherit;color:inherit}
 .vw{color:var(--star);font-weight:500}
 .klabel{display:block;font-size:13px;margin:10px 0 4px}
 #ytkey{width:100%;font-size:13px;padding:8px 10px;border-radius:8px;border:1px solid var(--line);background:var(--abyss);color:var(--ink);margin-bottom:8px}
+.botrow{align-items:flex-end}
+.layers{display:flex;flex-wrap:wrap;gap:6px;margin-left:auto;margin-right:8px}
+.lay{--c:var(--muted);display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:color-mix(in srgb,var(--chart) 82%,transparent);backdrop-filter:blur(6px);color:var(--muted);border-radius:999px;padding:5px 11px;font-size:13px;cursor:pointer}
+.lay i{width:8px;height:8px;border-radius:50%;background:var(--c);opacity:.5}
+.lay .n{font-size:11px;opacity:.75;font-variant-numeric:tabular-nums}
+.lay[aria-pressed="true"]{color:var(--ink);border-color:var(--c)}
+.lay[aria-pressed="true"] i{opacity:1}
+.lay.ty{--c:#ff6b9a} .lay.eq{--c:#ff7a45} .lay.fl{--c:#9fb4ff} .lay.sh{--c:#ffd27a}
+.tyGale{fill:rgba(255,210,90,.07);stroke:rgba(255,210,90,.55);stroke-width:.8px;vector-effect:non-scaling-stroke;pointer-events:none}
+.tyStorm{fill:rgba(255,80,120,.16);stroke:rgba(255,80,120,.75);stroke-width:.9px;vector-effect:non-scaling-stroke;pointer-events:none}
+.tyProb{fill:rgba(255,107,154,.05);stroke:#ff6b9a;stroke-dasharray:2 3;stroke-width:.8px;vector-effect:non-scaling-stroke;pointer-events:none}
+.tyTrack{fill:none;stroke:#ff6b9a;stroke-width:1.6px;vector-effect:non-scaling-stroke;pointer-events:none}
+.tyFc{fill:none;stroke:#ff6b9a;stroke-width:1.4px;stroke-dasharray:5 4;vector-effect:non-scaling-stroke;pointer-events:none}
+.tyEye{cursor:pointer}
+.tyEye path{fill:#ff6b9a} .tyEye circle{fill:var(--abyss);stroke:#fff;stroke-width:1.5px;vector-effect:non-scaling-stroke}
+.tyEye text{fill:#fff;font-size:11px;font-weight:700;paint-order:stroke;stroke:rgba(5,10,20,.85);stroke-width:3px;stroke-linejoin:round}
+.eq{cursor:pointer}
+.eq circle{fill:rgba(255,122,69,.28);stroke:#ff7a45;stroke-width:1px;vector-effect:non-scaling-stroke}
+.eq.old circle{opacity:.45} .eq.big circle{stroke-width:2px}
+@media (prefers-reduced-motion:no-preference){.eq.fresh circle{animation:quake 1.6s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
+  @keyframes quake{50%{transform:scale(1.35);fill:rgba(255,122,69,.55)}}}
+.flp{fill:#9fb4ff;opacity:.6;cursor:pointer}
+.shp{fill:#ffd27a;opacity:.85;cursor:pointer}
+.ocard{position:absolute;z-index:3;right:max(16px,env(safe-area-inset-right,0px));top:96px;width:min(340px,calc(100% - 32px));max-height:calc(100% - 170px);overflow:auto;background:color-mix(in srgb,var(--chart) 95%,transparent);backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:12px;padding:14px 16px;font-size:14px;box-shadow:0 14px 40px rgba(0,0,0,.35)}
+.ocard .x{position:absolute;right:8px;top:6px}
+.ocard h4{font-family:var(--serif);font-size:19px;margin:0 24px 6px 0;line-height:1.3}
+.ocard h4 small{font-family:var(--sans);font-size:12px;color:var(--muted);margin-left:8px;font-weight:400}
+.ocard h5{font-size:13px;margin:12px 0 4px;color:var(--muted);font-weight:500}
+.ocard .kv{color:var(--ink);font-size:13.5px;line-height:1.75;margin:0}
+.ocard p.kv{color:var(--muted)}
+.ocard .near button{display:block;width:100%;text-align:left;background:none;border:0;border-top:1px solid var(--line);padding:7px 0;color:var(--ink);cursor:pointer;font-size:13.5px}
+.ocard .near button:hover{color:var(--k)}
+.ocard .near small{display:block;color:var(--muted);font-size:12px}
+.ocard .src{font-size:12px;color:var(--muted);margin:10px 0 0}
+.ocard .src a{color:var(--k)}
+.tybar{display:block;width:100%;text-align:left;margin:14px 0 0;padding:10px 14px;border-radius:10px;border:1px solid rgba(255,107,154,.55);background:rgba(255,107,154,.1);color:var(--ink);font-size:14px;cursor:pointer;line-height:1.6}
+.tybar b{color:#ff6b9a}
+.tybar span{color:var(--k);margin-left:6px;text-decoration:underline}
+@media (max-width:700px){.layers{margin:6px 0 0;order:3;width:100%}.ocard{top:auto;bottom:12px;max-height:60%}}
 .localnote{margin:14px 0 0;padding:10px 14px;border-radius:8px;background:color-mix(in srgb,var(--star) 12%,transparent);font-size:14px;max-width:80ch}
 footer{padding-bottom:40px;font-size:13px;color:var(--muted);max-width:86ch}
 footer p{margin:0 0 8px}
@@ -193,6 +232,7 @@ footer a{color:var(--k)}
 <section class="hero">
   <div class="mapbox">
     <svg id="map" role="img" aria-label="世界地圖：直播位置與此刻的晝夜分界"></svg>
+    <div class="ocard" id="ocard" hidden></div>
     <div class="over pad">
       <div class="toprow">
         <div class="brand"><h1>Wildcams</h1><p>全世界的動物與景點直播，點一下就在這裡播。</p></div>
@@ -205,6 +245,7 @@ footer a{color:var(--k)}
         </div>
         <div class="botrow">
           <div class="legend" id="legend"></div>
+          <div class="layers" id="layers" role="group" aria-label="即時圖層"></div>
           <div class="zoomctl"><button id="zin" aria-label="放大">+</button><button id="zout" aria-label="縮小">−</button><button id="zreset" aria-label="回到全世界">⟲</button></div>
         </div>
       </div>
@@ -214,6 +255,7 @@ footer a{color:var(--k)}
 
 <div class="pad">
   <p class="localnote" id="localnote" hidden>你是直接從電腦打開這個檔案，YouTube 不允許這樣嵌入，所以影片會在小視窗開啟。用 GitHub Pages 的網址打開就能在頁面裡播。</p>
+  <button class="tybar" id="tyBar" hidden></button>
   <p class="viewmsg" id="viewMsg" hidden></p>
   <div class="controls">
     <div class="chips" id="chips" role="group" aria-label="篩選"></div>
@@ -240,6 +282,7 @@ footer a{color:var(--k)}
 
   <footer>
     <p>清單裡共有 <span id="totalN">1230</span> 個直播網址，整理自 2026 年 10 月的 YouTube。直播常會重開換網址，所以第一次使用請按「檢查哪些在播」：網頁會逐一試播，播不出來的自動移到失效清單，日後重新檢查能播的會自動加回來。檢查結果只存在你這個瀏覽器。</p>
+    <p>即時圖層資料來源：颱風來自日本氣象廳與 GDACS（聯合國／歐盟全球災害警報系統），地震來自美國地質調查局 USGS，飛機來自 OpenSky Network（約 15 分鐘更新），船隻來自芬蘭交通署 Digitraffic（CC BY 4.0，只涵蓋波羅的海一帶；全球船隻資料需要付費或金鑰）。</p>
     <p>金色點是有名字的明星動物；有外圈的點是你這台瀏覽器確認過在播的；地圖上的陰影是此刻的夜晚，金色細線是晨昏線。</p>
   </footer>
 </div>
@@ -1628,6 +1671,7 @@ function drawNight(){
 drawNight();
 
 let k=1;
+const ovLayer=g.append("g").attr("class","ov");
 const dotLayer=g.append("g");
 const DOTX=matchMedia("(max-width:700px)").matches?2.1:1;
 function dotPos(d){return `translate(${proj([d.lon,d.lat])}) scale(${DOTX/Math.sqrt(k)})`}
@@ -1642,6 +1686,7 @@ const dots=dotLayer.selectAll("g.dot").data(CAMS,d=>d.id).join(enter=>{
 dots.filter(d=>d.star).raise();
 const zoom=d3.zoom().scaleExtent([1,14]).translateExtent([[0,0],[W,H]]).on("zoom",e=>{
   k=e.transform.k; g.attr("transform",e.transform); dots.attr("transform",dotPos);
+  if(typeof ovZoom==="function") ovZoom();
 });
 svg.call(zoom);
 d3.select("#zin").on("click",()=>svg.transition().duration(300).call(zoom.scaleBy,1.7));
@@ -1870,6 +1915,213 @@ function render(){
       .classed("sel",d=>d.id===selected).classed("off",isOff).classed("ok",d=>statusOf(d)==="ok");
   dots.filter(d=>d.id===selected).raise();
 }
+
+/* ---------- live layers: typhoons, earthquakes, flights, ships ---------- */
+const LAYERS=[["ty","颱風"],["eq","地震"],["fl","飛機"],["sh","船"]];
+let ON={}; try{ON=JSON.parse(store.get("wildcams-layers")||'{"ty":true,"eq":true}')||{}}catch(e){ON={ty:true,eq:true}}
+const tyG=ovLayer.append("g"), eqG=ovLayer.append("g");
+const flP=ovLayer.append("path").attr("class","flp"), shP=ovLayer.append("path").attr("class","shp");
+const OV={ty:[],eq:[],fl:[],sh:[]}, OVT={}, OVBUSY={};
+const sc=()=>1/Math.sqrt(k);
+const EVERY={ty:30*60e3, eq:5*60e3, fl:5*60e3, sh:2*60e3};
+const KM=6371.0088, toDeg=km=>km/111.195;
+const geoKm=(a,b)=>d3.geoDistance(a,b)*KM;
+const ago=t=>{const m=Math.round((Date.now()-t)/60000); return m<1?"剛剛":m<60?`${m} 分鐘前`:m<1440?`${Math.round(m/60)} 小時前`:`${Math.round(m/1440)} 天前`;};
+const JP={"強い":"強烈","非常に強い":"非常強烈","猛烈な":"猛烈","大型":"大型","超大型":"超大型"};
+const jp=s=>s?String(s).replace(/の/g,"").replace(/与那国/g,"與那國").replace(/沖縄/g,"沖繩").replace(/宮古/g,"宮古").replace(/島/g,"島"):"";
+
+function buildLayerBtns(){
+  const box=$("layers"); box.innerHTML="";
+  LAYERS.forEach(([key,label])=>{
+    const b=document.createElement("button"); b.className="lay "+key; b.setAttribute("aria-pressed",!!ON[key]);
+    b.innerHTML=`<i></i>${label}<span class="n" id="ln-${key}"></span>`;
+    b.onclick=()=>{ ON[key]=!ON[key]; store.set("wildcams-layers",JSON.stringify(ON)); b.setAttribute("aria-pressed",ON[key]);
+      if(ON[key]) loadLayer(key,true); drawLayer(key); if(!ON[key]&&$("ocard").dataset.kind===key) closeCard(); };
+    box.appendChild(b);
+  });
+}
+function setCount(key){ const el=$("ln-"+key); if(el) el.textContent=ON[key]&&OV[key].length?OV[key].length.toLocaleString("zh-TW"):""; }
+
+/* --- typhoons: JMA for the western Pacific (track + forecast), GDACS for everywhere else --- */
+async function loadTy(){
+  const out=[];
+  try{
+    const list=await (await fetch("https://www.jma.go.jp/bosai/typhoon/data/targetTc.json",{cache:"no-store"})).json();
+    for(const t of list){
+      const id=t.tropicalCyclone, base=`https://www.jma.go.jp/bosai/typhoon/data/${id}/`;
+      const [spec,fc]=await Promise.all([fetch(base+"specifications.json").then(r=>r.json()),fetch(base+"forecast.json").then(r=>r.json())]);
+      const title=spec.find(p=>p.part==="title")||{}, now=spec.find(p=>p.part&&p.part.en==="Analysis")||{};
+      const ana=fc.find(p=>p.part&&p.part.en==="Analysis")||{};
+      const pos=now.position?now.position.deg:ana.center; if(!pos) continue;
+      const isTY=(title.category&&title.category.en)==="TY"||t.category==="TY";
+      const sw=ana.stormWarningArea&&ana.stormWarningArea.arc&&ana.stormWarningArea.arc[0];
+      out.push({src:"jma", name:title.name?(title.name.en||title.name.jp):"", jpName:title.name&&title.name.jp, isTY,
+        num:/^\d+$/.test(t.typhoonNumber)?+t.typhoonNumber.slice(2):null,
+        lat:pos[0], lon:pos[1],
+        track:ana.track?[...(ana.track.preTyphoon||[]),...(ana.track.typhoon||[])].map(([a,b])=>[b,a]):[],
+        fc:fc.filter(p=>p.part&&p.advancedHours>0&&p.center).map(p=>({lat:p.center[0],lon:p.center[1],h:p.advancedHours,r:p.probabilityCircle?p.probabilityCircle.radius/1000:0})),
+        storm:sw?{c:sw[0],r:sw[1]/1000}:null, gale:ana.galeWarningArea?{c:ana.galeWarningArea.center,r:ana.galeWarningArea.radius/1000}:null,
+        wind:now.maximumWind&&now.maximumWind.sustained?+now.maximumWind.sustained["m/s"]:null,
+        gust:now.maximumWind&&now.maximumWind.gust?+now.maximumWind.gust["m/s"]:null,
+        pressure:now.pressure, intensity:JP[now.intensity]||"", scale:JP[now.scale]||"", loc:jp(now.location), course:now.course||"",
+        speed:now.speed&&now.speed["km/h"]?now.speed["km/h"]+" km/h":(now.speed&&now.speed.note?"緩慢":""), time:now.validtime&&now.validtime.UTC});
+    }
+  }catch(e){}
+  try{
+    const f=d=>d.toISOString().slice(0,10);
+    const j=await (await fetch(`https://www.gdacs.org/gdacsapi/api/events/geteventlist/SEARCH?eventlist=TC&fromDate=${f(new Date(Date.now()-12*864e5))}&toDate=${f(new Date(Date.now()+864e5))}`)).json();
+    (j.features||[]).forEach(ft=>{
+      const p=ft.properties; if(p.iscurrent!=="true") return;
+      const [lon,lat]=ft.geometry.coordinates;
+      if(out.some(o=>geoKm([o.lon,o.lat],[lon,lat])<600)) return;
+      out.push({src:"gdacs", name:p.eventname.replace(/-\d+$/,""), lat, lon, track:[], fc:[], isTY:true,
+        alert:{Red:"紅色",Orange:"橘色",Green:"綠色"}[p.alertlevel]||p.alertlevel, sev:p.severitydata&&p.severitydata.severity,
+        country:p.country, url:p.url&&p.url.report, time:p.datemodified});
+    });
+  }catch(e){}
+  return out;
+}
+const tyLabel=t=>t.isTY?(t.name?`颱風 ${t.name.toUpperCase()}`:"颱風"):"熱帶性低氣壓";
+function drawTy(){
+  tyG.selectAll("*").remove(); if(!ON.ty) return;
+  OV.ty.forEach((t,i)=>{
+    const G=tyG.append("g").attr("class","ty");
+    const circ=(c,r,cls)=>G.append("path").attr("class",cls).attr("d",path(d3.geoCircle().center(c).radius(toDeg(r))()));
+    if(t.gale) circ([t.gale.c[1],t.gale.c[0]],t.gale.r,"tyGale");
+    if(t.storm) circ([t.storm.c[1],t.storm.c[0]],t.storm.r,"tyStorm");
+    t.fc.forEach(p=>{ if(p.r) circ([p.lon,p.lat],p.r,"tyProb"); });
+    if(t.track.length>1) G.append("path").attr("class","tyTrack").attr("d",path({type:"LineString",coordinates:t.track}));
+    if(t.fc.length) G.append("path").attr("class","tyFc").attr("d",path({type:"LineString",coordinates:[[t.lon,t.lat],...t.fc.map(p=>[p.lon,p.lat])]}));
+    const eye=G.append("g").attr("class","tyEye").datum(t).on("click",(ev)=>{ev.stopPropagation(); openTy(t);});
+    eye.append("path").attr("d","M0,-9 C6,-9 9,-4 8,1 C11,-3 6,-11 0,-9 Z M0,9 C-6,9 -9,4 -8,-1 C-11,3 -6,11 0,9 Z");
+    eye.append("circle").attr("r",4.2);
+    eye.append("text").attr("x",11).attr("y",4).text(tyLabel(t));
+  });
+  ovScale();
+}
+function nearCams(lon,lat,km,n){
+  return CAMS.filter(c=>c.embed&&!isOff(c)).map(c=>[c,geoKm([lon,lat],[c.lon,c.lat])]).filter(x=>x[1]<=km).sort((a,b)=>a[1]-b[1]).slice(0,n);
+}
+function nearHTML(list,empty){
+  if(!list.length) return `<p class="kv">${empty}</p>`;
+  return `<div class="near">${list.map(([c,d])=>`<button data-cam="${c.id}">${esc(c.title)}<small>${esc(c.place)}，約 ${Math.round(d)} 公里</small></button>`).join("")}</div>`;
+}
+function openTy(t){
+  const pts=[[t.lon,t.lat],...t.fc.map(p=>[p.lon,p.lat])];
+  const seen=new Map(); pts.forEach(p=>nearCams(p[0],p[1],450,20).forEach(([c,d])=>{ if(!seen.has(c.id)||seen.get(c.id)[1]>d) seen.set(c.id,[c,d]); }));
+  const near=[...seen.values()].sort((a,b)=>a[1]-b[1]).slice(0,10);
+  const facts=t.src==="jma"?[
+      [t.scale,t.intensity].filter(Boolean).join("、")||null,
+      t.pressure?`中心氣壓 ${t.pressure} hPa`:null,
+      t.wind?`最大風速 ${t.wind} m/s（陣風 ${t.gust} m/s）`:null,
+      t.loc?`位置：${t.loc}`:`位置：${t.lat.toFixed(1)}°N ${t.lon.toFixed(1)}°E`,
+      t.course?`向${t.course}移動${t.speed?"，"+t.speed:""}`:null,
+      t.time?`觀測時間 ${new Date(t.time).toLocaleString("zh-TW",{month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"})}`:null]
+    :[ t.alert?`GDACS ${t.alert}警戒`:null, t.sev?`最大風速約 ${Math.round(t.sev)} km/h`:null, t.country?`影響：${esc(t.country)}`:null, `位置：${Math.abs(t.lat).toFixed(1)}°${t.lat>=0?"N":"S"} ${Math.abs(t.lon).toFixed(1)}°${t.lon>=0?"E":"W"}`];
+  openCard("ty",`<h4>${tyLabel(t)}${t.jpName&&t.isTY?`<small>${esc(t.jpName)}</small>`:""}</h4>
+    <div class="kv">${facts.filter(Boolean).map(x=>`<div>${x}</div>`).join("")}</div>
+    ${t.fc.length?`<p class="kv">虛線是預測路徑，虛線圓是預測中心可能落點範圍；紅色範圍是暴風圈，黃色是強風圈。</p>`:""}
+    <h5>路徑附近的鏡頭</h5>${nearHTML(near,"路徑 450 公里內目前沒有可播的鏡頭。")}
+    <p class="src">資料：${t.src==="jma"?"日本氣象廳":"GDACS（聯合國／歐盟）"}${t.url?`，<a href="${esc(t.url)}" target="_blank" rel="noopener">詳細報告 ↗</a>`:""}</p>`);
+}
+
+/* --- earthquakes: USGS, magnitude 2.5+ in the past 7 days --- */
+async function loadEq(){
+  const j=await (await fetch("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.geojson")).json();
+  return (j.features||[]).map(f=>({id:f.id,mag:f.properties.mag,place:f.properties.place,time:f.properties.time,url:f.properties.url,
+    tsunami:f.properties.tsunami,lon:f.geometry.coordinates[0],lat:f.geometry.coordinates[1],depth:f.geometry.coordinates[2]})).sort((a,b)=>a.mag-b.mag);
+}
+function drawEq(){
+  const data=ON.eq?OV.eq:[];
+  eqG.selectAll("g.eq").data(data,d=>d.id).join(en=>{ const e=en.append("g").on("click",(ev,d)=>{ev.stopPropagation(); openEq(d);}); e.append("circle"); e.append("title"); return e; })
+    .attr("class",d=>{const h=(Date.now()-d.time)/36e5; return "eq"+(h<1?" fresh":h<24?" day":" old")+(d.mag>=6?" big":"");})
+    .each(function(d){ const s=d3.select(this); s.select("circle").attr("r",Math.max(2,Math.pow(d.mag-1.5,1.4))); s.select("title").text(`M${d.mag.toFixed(1)}｜${d.place}｜${ago(d.time)}`); });
+  ovScale();
+}
+function openEq(d){
+  openCard("eq",`<h4>規模 ${d.mag.toFixed(1)} 地震</h4>
+    <div class="kv"><div>${esc(d.place)}</div><div>${new Date(d.time).toLocaleString("zh-TW",{month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"})}（${ago(d.time)}，台北時間）</div><div>深度 ${Math.round(d.depth)} 公里${d.tsunami?"，有發布海嘯資訊":""}</div></div>
+    <h5>震央附近的鏡頭</h5>${nearHTML(nearCams(d.lon,d.lat,300,6),"震央 300 公里內沒有可播的鏡頭。")}
+    <p class="src">資料：美國地質調查局 USGS，<a href="${esc(d.url)}" target="_blank" rel="noopener">詳細資料 ↗</a></p>`);
+}
+
+/* --- flights: OpenSky snapshot published by this site's GitHub Action every ~15 minutes --- */
+async function loadFl(){
+  const j=await (await fetch("https://raw.githubusercontent.com/mmllpp772/wildcams/data/flights.json",{cache:"no-store"})).json();
+  OVT.flTime=j.t*1000;
+  return j.f.map(r=>({lon:r[0],lat:r[1],hd:r[2],alt:r[3],cs:r[4],co:r[5],spd:r[6]}));
+}
+/* --- ships: Finnish Transport Infrastructure Agency AIS (Baltic Sea), live --- */
+let VESSELS=null;
+async function loadSh(){
+  const [loc]=await Promise.all([
+    fetch("https://meri.digitraffic.fi/api/ais/v1/locations").then(r=>r.json()),
+    VESSELS?null:fetch("https://meri.digitraffic.fi/api/ais/v1/vessels").then(r=>r.json()).then(v=>{VESSELS={}; v.forEach(x=>VESSELS[x.mmsi]=x);}).catch(()=>{VESSELS={};})
+  ]);
+  const cut=Date.now()-3*36e5;
+  return (loc.features||[]).filter(f=>(f.properties.timestampExternal||0)>cut).map(f=>({mmsi:f.mmsi,lon:f.geometry.coordinates[0],lat:f.geometry.coordinates[1],
+    hd:f.properties.heading<360?f.properties.heading:f.properties.cog, sog:f.properties.sog, t:f.properties.timestampExternal}));
+}
+const SHIPTYPE=t=>t>=60&&t<70?"客輪":t>=70&&t<80?"貨船":t>=80&&t<90?"油輪":t===30?"漁船":t===52?"拖船":t===36||t===37?"遊艇／帆船":t>=40&&t<50?"高速船":t===51?"搜救船":"船";
+function glyphPath(list,size,shape){
+  const s=size, out=[];
+  for(const p of list){
+    const xy=proj([p.lon,p.lat]); if(!xy) continue; p.x=xy[0]; p.y=xy[1];
+    if(shape==="plane"){ const a=(p.hd||0)*Math.PI/180, ca=Math.cos(a), sa=Math.sin(a);
+      const pt=(dx,dy)=>`${(p.x+dx*ca-dy*sa).toFixed(2)},${(p.y+dx*sa+dy*ca).toFixed(2)}`;
+      out.push(`M${pt(0,-1.6*s)}L${pt(s,s)}L${pt(0,.4*s)}L${pt(-s,s)}Z`); }
+    else out.push(`M${(p.x).toFixed(2)},${(p.y-s).toFixed(2)}l${s},${s}l${-s},${s}l${-s},${-s}Z`);
+  }
+  return out.join("");
+}
+function drawFl(){ flP.attr("d",ON.fl?glyphPath(OV.fl,DOTX*1.2/Math.pow(k,.8),"plane"):null); }
+function drawSh(){ shP.attr("d",ON.sh?glyphPath(OV.sh,DOTX*1.1/Math.pow(k,.8),"ship"):null); }
+function nearestIn(list,ev,maxPx){
+  const [x,y]=d3.pointer(ev,g.node()); let best=null, bd=(maxPx*sc())**2;
+  for(const p of list){ if(p.x==null) continue; const d=(p.x-x)**2+(p.y-y)**2; if(d<bd){bd=d; best=p;} }
+  return best;
+}
+flP.on("click",ev=>{ ev.stopPropagation(); const p=nearestIn(OV.fl,ev,8); if(!p) return;
+  openCard("fl",`<h4>${esc(p.cs||"（無呼號）")}</h4><div class="kv"><div>註冊國：${esc(p.co)}</div><div>高度 ${p.alt.toLocaleString("zh-TW")} 公尺，速度 ${p.spd} km/h，航向 ${p.hd}°</div><div>位置更新：${ago(OVT.flTime)}</div></div>
+  ${p.cs?`<p class="src"><a href="https://www.flightradar24.com/${encodeURIComponent(p.cs)}" target="_blank" rel="noopener">在 Flightradar24 查這個航班 ↗</a></p>`:""}<p class="src">資料：OpenSky Network（約 15 分鐘更新一次）</p>`); });
+shP.on("click",ev=>{ ev.stopPropagation(); const p=nearestIn(OV.sh,ev,8); if(!p) return; const v=(VESSELS||{})[p.mmsi]||{};
+  openCard("sh",`<h4>${esc((v.name||"").trim()||"MMSI "+p.mmsi)}</h4><div class="kv"><div>${SHIPTYPE(v.shipType)}${v.destination?`，目的地 ${esc(v.destination)}`:""}</div><div>速度 ${p.sog} 節，航向 ${Math.round(p.hd)}°</div><div>位置更新：${ago(p.t)}</div></div>
+  <p class="src"><a href="https://www.marinetraffic.com/en/ais/details/ships/mmsi:${p.mmsi}" target="_blank" rel="noopener">在 MarineTraffic 查這艘船 ↗</a></p><p class="src">資料：芬蘭交通署 Digitraffic（波羅的海一帶）</p>`); });
+
+/* --- shared --- */
+const LOADERS={ty:loadTy,eq:loadEq,fl:loadFl,sh:loadSh};
+const DRAW={ty:drawTy,eq:drawEq,fl:drawFl,sh:drawSh};
+function drawLayer(key){ DRAW[key](); setCount(key); if(key==="ty") tyBanner(); }
+async function loadLayer(key,force){
+  if(OVBUSY[key]||(!force&&OVT[key]&&Date.now()-OVT[key]<EVERY[key])) return;
+  OVBUSY[key]=true;
+  try{ OV[key]=await LOADERS[key](); OVT[key]=Date.now(); }catch(e){ console.warn(key,e); }
+  OVBUSY[key]=false; drawLayer(key);
+}
+function ovScale(){
+  const s=sc();
+  const c=DOTX/Math.pow(k,.85);   /* keep markers roughly the same size on screen while zooming */
+  tyG.selectAll("g.tyEye").attr("transform",d=>`translate(${proj([d.lon,d.lat])}) scale(${c})`);
+  eqG.selectAll("g.eq").attr("transform",d=>`translate(${proj([d.lon,d.lat])}) scale(${c})`);
+}
+let ovT=null;
+function ovZoom(){ ovScale(); clearTimeout(ovT); ovT=setTimeout(()=>{ if(ON.fl) drawFl(); if(ON.sh) drawSh(); },180); }
+function openCard(kindKey,html){ const c=$("ocard"); c.dataset.kind=kindKey; c.innerHTML=`<button class="x" aria-label="關閉">×</button>${html}`; c.hidden=false;
+  c.querySelector(".x").onclick=closeCard; c.querySelectorAll("[data-cam]").forEach(b=>b.onclick=()=>select(b.dataset.cam,true)); }
+function closeCard(){ const c=$("ocard"); c.hidden=true; c.dataset.kind=""; }
+svg.on("click.card",()=>closeCard());
+function zoomTo(lon,lat,s){ const [x,y]=proj([lon,lat]); svg.transition().duration(700).call(zoom.transform,d3.zoomIdentity.translate(W/2,H/2).scale(s).translate(-x,-y)); }
+function tyBanner(){
+  const b=$("tyBar"), ts=ON.ty?OV.ty.filter(t=>t.isTY):[];
+  if(!ts.length){ b.hidden=true; return; }
+  const near=ts.map(t=>[t,geoKm([t.lon,t.lat],[121,23.7])]).sort((a,b)=>a[1]-b[1]);
+  const [t,d]=near[0];
+  b.innerHTML=`<b>${tyLabel(t)}</b>${t.intensity?`，${t.intensity}`:""}${t.loc?`，中心在${esc(t.loc)}`:""}${d<1500?`，距離台灣約 ${Math.round(d/10)*10} 公里`:""}${ts.length>1?`；目前共有 ${ts.length} 個颱風`:""}。<span>點這裡看路徑和附近的鏡頭</span>`;
+  b.hidden=false; b.onclick=()=>{ zoomTo(t.lon,t.lat,4); openTy(t); };
+}
+buildLayerBtns();
+LAYERS.forEach(([key])=>{ if(ON[key]) loadLayer(key,true); });
+setInterval(()=>{ if(document.hidden) return; LAYERS.forEach(([key])=>{ if(ON[key]) loadLayer(key,false); }); if(ON.eq) drawEq(); },60e3);
 
 /* ---------- scan every cam in this browser ---------- */
 const scanBtn=$("scanBtn"), panel=$("scan");
