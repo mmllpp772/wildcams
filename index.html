@@ -1509,7 +1509,7 @@ const CAMS = CAMS_RAW.map((r,i)=>{
     :yt?`https://www.youtube.com/embed/${yt}?autoplay=1&mute=1&rel=0&playsinline=1`:null;
   const watch=tw?`https://www.twitch.tv/${tw}`:yt?`https://www.youtube.com/watch?v=${yt}`:url;
   const cats=cat.split(",");
-  return {id:"c"+i,key:yt||url,title,place,lat,lon,tz,cat:cats,kind:cats.includes("scenic")?"scenic":"animal",
+  return {id:"c"+i,key:tw?"tw2:"+tw:(yt||url),title,place,lat,lon,tz,cat:cats,kind:cats.includes("scenic")?"scenic":"animal",
     region:regionOf(tz,lon),embed,watch,vid:tw?null:yt,tw,names:names||null,note:note||null,star:!!names};
 });
 
@@ -1547,8 +1547,12 @@ function probeTW(box,c,onResult,ms){
   const timer=setTimeout(()=>finish("stalled"),ms);
   loadTW().then(()=>{ if(done)return; try{
     const p=new Twitch.Player(box,{channel:c.tw,parent:[location.hostname],muted:true,autoplay:true,width:"100%",height:"100%"});
+    /* autoplay needs a 400x300 visible player, so don't wait for PLAYING:
+       OFFLINE fires right after READY when the channel is not live; no OFFLINE within a few seconds means it is live */
     p.addEventListener(Twitch.Player.PLAYING,()=>finish("ok"));
+    p.addEventListener(Twitch.Player.ONLINE,()=>finish("ok"));
     p.addEventListener(Twitch.Player.OFFLINE,()=>finish("dead"));
+    p.addEventListener(Twitch.Player.READY,()=>setTimeout(()=>finish("ok"),6000));
   }catch(err){} }).catch(()=>{});
   return reason=>{ if(reason) finish(reason); else {done=true; clearTimeout(timer);} };
 }
