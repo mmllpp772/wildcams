@@ -13,7 +13,7 @@
 :root{
   --bg:#eef0ea; --panel:#f8f8f4; --ocean:#cdd9dc; --land:#e4dfcf; --border-land:#c3bca7;
   --ink:#1c2729; --muted:#5d6b6b; --line:#d5d8cf;
-  --accent:#0d6b66; --star:#b06f12; --night:rgba(16,32,58,.22);
+  --accent:#0d6b66; --star:#b06f12; --scenic:#5b4fc4; --night:rgba(16,32,58,.22);
   --f-display:"Bricolage Grotesque","Noto Sans TC",system-ui,sans-serif;
   --f-body:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
   --f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
@@ -21,11 +21,11 @@
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
   --bg:#0f181b; --panel:#152125; --ocean:#11252b; --land:#26332f; --border-land:#3a4a44;
   --ink:#e6ebe7; --muted:#93a39f; --line:#26353a;
-  --accent:#5cc8bd; --star:#eab055; --night:rgba(0,4,14,.45); color-scheme:dark}}
+  --accent:#5cc8bd; --star:#eab055; --scenic:#a99cf5; --night:rgba(0,4,14,.45); color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#0f181b; --panel:#152125; --ocean:#11252b; --land:#26332f; --border-land:#3a4a44;
   --ink:#e6ebe7; --muted:#93a39f; --line:#26353a;
-  --accent:#5cc8bd; --star:#eab055; --night:rgba(0,4,14,.45); color-scheme:dark}
+  --accent:#5cc8bd; --star:#eab055; --scenic:#a99cf5; --night:rgba(0,4,14,.45); color-scheme:dark}
 
 body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.55}
 .wrap{max-width:1320px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 40px}
@@ -155,6 +155,14 @@ footer p{margin:0 0 8px}
 .smodes{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
 .smodes .go{margin:0;font-size:13px;padding:6px 10px;cursor:pointer;font-family:inherit;border:0}
 .smodes .go.ghost{border:1px solid var(--accent)}
+
+.dot.scenic circle.core{fill:var(--scenic)}
+.dot.auto circle.core{stroke-width:1px}
+.scan.auto{right:auto;left:calc(16px + env(safe-area-inset-left,0px));width:min(400px,calc(100vw - 32px))}
+.klabel{display:block;font-size:13px;font-weight:700;margin:8px 0 4px}
+#ytkey{width:100%;font:13px var(--f-mono);padding:8px 10px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);margin-bottom:8px}
+#autoSave{margin:0;border:0;cursor:pointer;font:inherit;font-size:14px;padding:7px 14px}
+#autoGo:disabled{opacity:.5}
 footer{margin-top:22px;font-size:13px;color:var(--muted);max-width:80ch}
 footer a{color:var(--accent)}
 </style>
@@ -163,12 +171,12 @@ footer a{color:var(--accent)}
   <header>
     <div>
       <h1>野生直播地圖</h1>
-      <p class="sub"><span id="totalN">297</span> 個動物直播，點地圖上的點或清單就直接播放。金色的點是有名字的明星動物；陰影是此刻地球上的夜晚，挑還在白天的地方比較容易看到動物。</p>
+      <p class="sub"><span id="totalN">312</span> 個直播，點地圖上的點或清單就直接播放。金色的點是有名字的明星動物；陰影是此刻地球上的夜晚，挑還在白天的地方比較容易看到動物。</p>
     </div>
     <div class="utc">台北時間 <b id="tpe">--:--</b><br>UTC <span id="utc">--:--</span></div>
   </header>
 
-  <div class="toolbar"><div class="chips" id="chips" role="group" aria-label="篩選直播"></div><button class="chip scanbtn" id="scanBtn">檢查哪些在播</button><label class="search"><span class="sr">搜尋直播</span><input id="q" type="search" placeholder="搜尋：熊貓、老鷹、Kenya…" autocomplete="off"></label></div>
+  <div class="toolbar"><div class="chips" id="chips" role="group" aria-label="篩選直播"></div><button class="chip scanbtn" id="autoBtn">自動抓直播</button><button class="chip scanbtn" id="scanBtn">檢查哪些在播</button><label class="search"><span class="sr">搜尋直播</span><input id="q" type="search" placeholder="搜尋：熊貓、老鷹、Kenya…" autocomplete="off"></label></div>
 
   <div class="scan" id="scan" hidden role="dialog" aria-label="檢查直播">
     <div class="shead"><b>檢查直播</b><button class="x" id="scanClose" aria-label="關閉">×</button></div>
@@ -180,13 +188,22 @@ footer a{color:var(--accent)}
     <div class="smodes"><button class="go" data-scan="new">檢查還沒檢查的</button><button class="go ghost" data-scan="dead">重新檢查失效清單</button><button class="go ghost" data-scan="all">全部重新檢查</button></div>
     <div class="sbtns"><button class="toggle" id="scanStop" hidden>暫停</button><button class="toggle" id="scanCopy">複製失效清單</button></div>
   </div>
+  <div class="scan auto" id="auto" hidden role="dialog" aria-label="自動抓直播">
+    <div class="shead"><b>自動抓「現在正在播」的直播</b><button class="x" id="autoClose" aria-label="關閉">×</button></div>
+    <p class="smsg">貼上你的 YouTube Data API 金鑰，網頁會向 YouTube 查詢此刻在播的動物和景點直播，自動放上地圖。金鑰只存在這個瀏覽器，不會上傳到別處。每 20 小時自動更新一次（一次約用掉 5,700 點，每天免費 10,000 點）。</p>
+    <label class="klabel" for="ytkey">YouTube API 金鑰</label>
+    <input id="ytkey" type="text" autocomplete="off" spellcheck="false" placeholder="AIza…">
+    <div class="sbtns"><button class="go" id="autoSave">儲存並抓取</button><button class="toggle" id="autoGo">立刻更新</button></div>
+    <p class="snum" id="autoInfo"></p>
+    <p class="smsg" id="autoMsg"></p>
+  </div>
   <p class="localnote" id="localnote" hidden>你是直接從電腦打開這個檔案，YouTube 不允許這樣嵌入播放，所以影片會在小視窗開啟。想在頁面裡直接播，請改用一起附上的啟動檔（start-wildcams）打開。</p>
   <div class="grid">
     <section>
       <div class="mapbox">
         <svg id="map" role="img" aria-label="世界地圖與直播位置"></svg>
         <div class="zoomctl"><button id="zin" aria-label="放大">+</button><button id="zout" aria-label="縮小">−</button><button id="zreset" aria-label="重設地圖">⟲</button></div>
-        <div class="legend"><span><i style="background:var(--star)"></i>有名字的動物</span><span><i style="background:var(--accent)"></i>地點鏡頭</span><span><i style="background:var(--night)"></i>現在是夜晚</span></div>
+        <div class="legend"><span><i style="background:var(--star)"></i>有名字的動物</span><span><i style="background:var(--accent)"></i>動物鏡頭</span><span><i style="background:var(--scenic)"></i>景點直播</span><span><i style="background:var(--night)"></i>現在是夜晚</span></div>
       </div>
       <div class="detail" id="detail" aria-live="polite"></div>
     </section>
@@ -524,10 +541,26 @@ const CAMS_RAW = [
 ["愛沙尼亞鷹巢（Kotkaklubi 頻道）","愛沙尼亞",58.6,25.6,"Europe/Tallinn","nest","ch:UCCvBXTVqksM0wSaqd19N0Sg"],
 ["挪威餵食器（頻道）","挪威",60.4,10.7,"Europe/Oslo","nest","ch:UC3yTiWF5Bmz03Qem8UxPaPg"],
 ["Black Hills 野馬保護區","美國南達科他・溫泉市",43.3,-103.6,"America/Denver","wild","ch:UCQiL_zrgjB6e4WemhU993lg"],
+// ---------- 景點直播 ----------
+["合歡山武嶺亭","台灣南投・合歡山",24.137,121.276,"Asia/Taipei","scenic","2lVMTs_Fj0M",null,null,"台灣公路最高點，海拔 3275 公尺，冬天常下雪。"],
+["合歡山武嶺附近（第二路）","台灣南投・合歡山",24.14,121.28,"Asia/Taipei","scenic","BiBNiJAW3dY"],
+["合歡山小風口","台灣南投・合歡山",24.155,121.287,"Asia/Taipei","scenic","ZVLNFxiiFEI"],
+["澎湖觀音亭 360°","台灣澎湖・馬公",23.57,119.56,"Asia/Taipei","scenic","tJSJMfxfivY"],
+["日月潭","台灣南投・日月潭",23.86,120.92,"Asia/Taipei","scenic","CsC0Op9i_bY"],
+["澀谷十字路口","日本東京・澀谷",35.659,139.7,"Asia/Tokyo","scenic","3Q5wZeTuttw"],
+["富士山（忍野八海）","日本山梨・忍野村",35.46,138.83,"Asia/Tokyo","scenic","PxzwnWh1dKk"],
+["富士山 24 小時","日本山梨",35.36,138.73,"Asia/Tokyo","scenic","k2jK77JaTEU"],
+["富士山（富士景觀飯店）","日本山梨・河口湖",35.5,138.75,"Asia/Tokyo","scenic","6sin2Z5WM3I"],
+["時代廣場","美國紐約",40.758,-73.985,"America/New_York","scenic","z-jYdOIKcTQ"],
+["時代廣場 4K","美國紐約",40.759,-73.986,"America/New_York","scenic","Q0uLV52xGZE"],
+["尼加拉瀑布","加拿大／美國・尼加拉瀑布",43.08,-79.07,"America/Toronto","scenic","qx7gry390YA"],
+["Abisko 極光","瑞典・阿比斯庫",68.35,18.83,"Europe/Stockholm","scenic","_zy6kB7W77I",null,null,"9 月到隔年 3 月是極光季，現在正好。"],
+["羅瓦涅米 Apukka 極光","芬蘭・拉普蘭",66.57,25.85,"Europe/Helsinki","scenic","wT8Zhh9MBEE"],
+["馬特洪峰","瑞士・策馬特",45.94,7.73,"Europe/Zurich","scenic","o9puACFGW0o"],
 ];
 
 const LOCAL = location.protocol==="file:";
-const CAMS = CAMS_RAW.map((r,i)=>{
+let CAMS = CAMS_RAW.map((r,i)=>{
   const [title,place,lat,lon,tz,cat,yt,url,names,note]=r;
   let embed=null, watch=url;
   if(yt && yt.startsWith("ch:")){const ch=yt.slice(3); embed=`https://www.youtube.com/embed/live_stream?channel=${ch}&autoplay=1&mute=1`; watch=`https://www.youtube.com/channel/${ch}/live`;}
@@ -542,7 +575,7 @@ let STATUS={}; try{STATUS=JSON.parse(localStorage.getItem(ST_KEY)||"{}")||{}}cat
 function saveStatus(){try{localStorage.setItem(ST_KEY,JSON.stringify(STATUS))}catch(e){}}
 function setStatus(c,s){STATUS[c.key]={s,t:Date.now()};saveStatus();}
 function checkedAt(c){const r=STATUS[c.key]; if(!r)return ""; const d=new Date(r.t); return `${d.getMonth()+1}/${d.getDate()}`;}
-function statusOf(c){const r=STATUS[c.key]; if(!r||Date.now()-r.t>ST_TTL)return null; return r.s;}
+function statusOf(c){const r=STATUS[c.key]; if(!r||Date.now()-r.t>ST_TTL) return c.auto?"ok":null; if(c.auto&&r.t<c.auto) return "ok"; return r.s;}
 const isOff=c=>{const s=statusOf(c);return s==="dead"||s==="stalled"};
 
 let ytReady=false; const ytQ=[];
@@ -571,10 +604,11 @@ const FILTERS=[
   {k:"ocean",label:"海洋",fn:c=>c.cat.includes("ocean")},
   {k:"zoo",label:"動物園・保育中心",fn:c=>c.cat.includes("zoo")},
   {k:"pet",label:"貓咪・救援",fn:c=>c.cat.includes("pet")},
+  {k:"scenic",label:"景點直播",fn:c=>c.cat.includes("scenic")},
   {k:"live",label:"確認在播",fn:c=>statusOf(c)==="ok"},
 ];
 let filter="all", query="", dayFirst=true;
-let selected=(CAMS.find(c=>c.title.startsWith("NamibiaCam"))||CAMS[0]).id;
+let selected=(CAMS.find(c=>c.title==="布魯克斯瀑布棕熊")||CAMS[0]).id;
 let view="live";   /* "live" = the main list, "dead" = the failed list */
 const shown=c=>view==="dead"?isOff(c):!isOff(c);
 
@@ -587,10 +621,17 @@ function subsolar(d=new Date()){
   let lon=-(hrs-12)*15; if(lon<-180)lon+=360; if(lon>180)lon-=360;
   return [lon,decl];
 }
-function isDay(c){return d3.geoDistance([c.lon,c.lat],subsolar())<Math.PI/2}
+function isDay(c){return c.lat==null?true:d3.geoDistance([c.lon,c.lat],subsolar())<Math.PI/2}
 function localTime(tz){
   try{return new Intl.DateTimeFormat("zh-TW",{timeZone:tz,hour:"2-digit",minute:"2-digit",hour12:false}).format(new Date())}
   catch(e){return "--:--"}
+}
+/* auto cams have no time zone: estimate it from longitude */
+function camTime(c){
+  if(c.tz) return localTime(c.tz);
+  if(c.lon==null) return "--:--";
+  const d=new Date(Date.now()+Math.round(c.lon/15)*3600e3);
+  return String(d.getUTCHours()).padStart(2,"0")+":"+String(d.getUTCMinutes()).padStart(2,"0");
 }
 
 /* ---------- map ---------- */
@@ -609,25 +650,169 @@ function drawNight(){
 }
 drawNight();
 
-let k=1;
-const dots=g.append("g").selectAll("g").data(CAMS).join("g")
-  .attr("class",d=>"dot"+(d.star?" star":""))
-  .attr("transform",d=>`translate(${proj([d.lon,d.lat])})`)
-  .attr("tabindex",0).attr("role","button").attr("aria-label",d=>d.title)
-  .on("click",(e,d)=>select(d.id,true))
-  .on("keydown",(e,d)=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();select(d.id,true)}});
-dots.filter(d=>d.star).append("circle").attr("class","halo").attr("r",4.5);
-dots.append("circle").attr("class","core").attr("r",4.5);
-dots.append("title").text(d=>d.title);
-
+let k=1, dots=d3.select(null);
+const dotLayer=g.append("g");
+function dotPos(d){return `translate(${proj([d.lon,d.lat])}) scale(${1/Math.sqrt(k)})`}
+function drawDots(){
+  const data=CAMS.filter(c=>c.lat!=null);
+  dots=dotLayer.selectAll("g.dot").data(data,d=>d.id).join(enter=>{
+    const e=enter.append("g")
+      .attr("tabindex",0).attr("role","button").attr("aria-label",d=>d.title)
+      .on("click",(ev,d)=>select(d.id,true))
+      .on("keydown",(ev,d)=>{if(ev.key==="Enter"||ev.key===" "){ev.preventDefault();select(d.id,true)}});
+    e.filter(d=>d.star).append("circle").attr("class","halo").attr("r",4.5);
+    e.append("circle").attr("class","core").attr("r",d=>d.auto?3.2:4.5);
+    e.append("title").text(d=>d.title);
+    return e;
+  });
+  dots.attr("class",d=>"dot"+(d.star?" star":"")+(d.cat.includes("scenic")?" scenic":"")+(d.auto?" auto":"")).attr("transform",dotPos);
+  /* hand-picked cams on top of auto ones */
+  dots.filter(d=>!d.auto).raise();
+}
+drawDots();
 const zoom=d3.zoom().scaleExtent([1,12]).translateExtent([[0,0],[W,H]]).on("zoom",e=>{
   k=e.transform.k; g.attr("transform",e.transform);
-  dots.attr("transform",d=>`translate(${proj([d.lon,d.lat])}) scale(${1/Math.sqrt(k)})`);
+  dots.attr("transform",dotPos);
 });
 svg.call(zoom);
 d3.select("#zin").on("click",()=>svg.transition().duration(300).call(zoom.scaleBy,1.6));
 d3.select("#zout").on("click",()=>svg.transition().duration(300).call(zoom.scaleBy,1/1.6));
 d3.select("#zreset").on("click",()=>svg.transition().duration(400).call(zoom.transform,d3.zoomIdentity));
+
+
+/* ---------- auto: ask YouTube what is live right now ---------- */
+const ISO2NUM={"AW":"533","AF":"004","AO":"024","AI":"660","AX":"248","AL":"008","AD":"020","AE":"784","AR":"032","AM":"051","AS":"016","AQ":"010","TF":"260","AG":"028","AU":"036","AT":"040","AZ":"031","BI":"108","BE":"056","BJ":"204","BQ":"535","BF":"854","BD":"050","BG":"100","BH":"048","BS":"044","BA":"070","BL":"652","BY":"112","BZ":"084","BM":"060","BO":"068","BR":"076","BB":"052","BN":"096","BT":"064","BV":"074","BW":"072","CF":"140","CA":"124","CC":"166","CH":"756","CL":"152","CN":"156","CI":"384","CM":"120","CD":"180","CG":"178","CK":"184","CO":"170","KM":"174","CV":"132","CR":"188","CU":"192","CW":"531","CX":"162","KY":"136","CY":"196","CZ":"203","DE":"276","DJ":"262","DM":"212","DK":"208","DO":"214","DZ":"012","EC":"218","EG":"818","ER":"232","EH":"732","ES":"724","EE":"233","ET":"231","FI":"246","FJ":"242","FK":"238","FR":"250","FO":"234","FM":"583","GA":"266","GB":"826","GE":"268","GG":"831","GH":"288","GI":"292","GN":"324","GP":"312","GM":"270","GW":"624","GQ":"226","GR":"300","GD":"308","GL":"304","GT":"320","GF":"254","GU":"316","GY":"328","HK":"344","HM":"334","HN":"340","HR":"191","HT":"332","HU":"348","ID":"360","IM":"833","IN":"356","IO":"086","IE":"372","IR":"364","IQ":"368","IS":"352","IL":"376","IT":"380","JM":"388","JE":"832","JO":"400","JP":"392","KZ":"398","KE":"404","KG":"417","KH":"116","KI":"296","KN":"659","KR":"410","KW":"414","LA":"418","LB":"422","LR":"430","LY":"434","LC":"662","LI":"438","LK":"144","LS":"426","LT":"440","LU":"442","LV":"428","MO":"446","MF":"663","MA":"504","MC":"492","MD":"498","MG":"450","MV":"462","MX":"484","MH":"584","MK":"807","ML":"466","MT":"470","MM":"104","ME":"499","MN":"496","MP":"580","MZ":"508","MR":"478","MS":"500","MQ":"474","MU":"480","MW":"454","MY":"458","YT":"175","NA":"516","NC":"540","NE":"562","NF":"574","NG":"566","NI":"558","NU":"570","NL":"528","NO":"578","NP":"524","NR":"520","NZ":"554","OM":"512","PK":"586","PA":"591","PN":"612","PE":"604","PH":"608","PW":"585","PG":"598","PL":"616","PR":"630","KP":"408","PT":"620","PY":"600","PS":"275","PF":"258","QA":"634","RE":"638","RO":"642","RU":"643","RW":"646","SA":"682","SD":"729","SN":"686","SG":"702","GS":"239","SH":"654","SJ":"744","SB":"090","SL":"694","SV":"222","SM":"674","SO":"706","PM":"666","RS":"688","SS":"728","ST":"678","SR":"740","SK":"703","SI":"705","SE":"752","SZ":"748","SX":"534","SC":"690","SY":"760","TC":"796","TD":"148","TG":"768","TH":"764","TJ":"762","TK":"772","TM":"795","TL":"626","TO":"776","TT":"780","TN":"788","TR":"792","TV":"798","TW":"158","TZ":"834","UG":"800","UA":"804","UM":"581","UY":"858","US":"840","UZ":"860","VA":"336","VC":"670","VE":"862","VG":"092","VI":"850","VN":"704","VU":"548","WF":"876","WS":"882","YE":"887","ZA":"710","ZM":"894","ZW":"716","XK":"-99"};
+const SMALL={SG:[1.35,103.82],HK:[22.32,114.17],MO:[22.2,113.55],MT:[35.9,14.45],BH:[26.07,50.55],MV:[3.2,73.22],MU:[-20.3,57.58],BB:[13.19,-59.54],KY:[19.3,-81.25],AW:[12.52,-69.97],CW:[12.17,-68.98],GI:[36.14,-5.35],MC:[43.74,7.42],LI:[47.16,9.55],AD:[42.55,1.6],SM:[43.94,12.46],LU:[49.8,6.13],PR:[18.22,-66.5],GU:[13.44,144.79],RE:[-21.12,55.53],PF:[-17.68,-149.4],FO:[62.0,-6.9],BM:[32.32,-64.76],AG:[17.06,-61.8],LC:[13.9,-60.98],GD:[12.12,-61.68],VC:[13.25,-61.2],KN:[17.34,-62.78],DM:[15.41,-61.37],SC:[-4.68,55.49],CV:[16.0,-24.0],KM:[-11.65,43.33],ST:[0.19,6.61],TO:[-21.18,-175.2],WS:[-13.76,-172.1],FM:[6.88,158.2],PW:[7.5,134.6],MH:[7.1,171.2],KI:[1.87,-157.4],TV:[-8.52,179.2],NR:[-0.52,166.93],BN:[4.53,114.73],GP:[16.25,-61.58],MQ:[14.64,-61.02],AX:[60.18,19.92],JE:[49.21,-2.13],GG:[49.45,-2.58],IM:[54.24,-4.55],TC:[21.69,-71.8],VG:[18.42,-64.64],VI:[18.34,-64.9],YT:[-12.83,45.17],GF:[3.93,-53.13],WF:[-13.77,-177.15],NC:[-21.3,165.5],AS:[-14.27,-170.7],MP:[15.1,145.7],AI:[18.22,-63.05],MS:[16.74,-62.19],BL:[17.9,-62.83],MF:[18.08,-63.05],SX:[18.04,-63.07],BQ:[12.18,-68.24],PM:[46.88,-56.32],SH:[-15.96,-5.71],IO:[-6.34,71.88],CK:[-21.24,-159.78],NU:[-19.05,-169.87],TK:[-9.2,-171.85],PN:[-25.07,-130.1],NF:[-29.04,167.95],CX:[-10.45,105.69],CC:[-12.16,96.87],HM:[-53.08,73.5],BV:[-54.42,3.36],GS:[-54.43,-36.59],TF:[-49.28,69.35],UM:[19.28,166.65]};
+const FEAT={}; countries.features.forEach(f=>{FEAT[f.id]=f});
+const REGION=(()=>{try{return new Intl.DisplayNames(["zh-TW"],{type:"region"})}catch(e){return null}})();
+const regionName=cc=>{try{return REGION?REGION.of(cc):cc}catch(e){return cc}};
+function seeded(str){let h=1779033703^str.length;for(let i=0;i<str.length;i++){h=Math.imul(h^str.charCodeAt(i),3432918353);h=h<<13|h>>>19;}
+  return ()=>{h=Math.imul(h^h>>>16,2246822507);h=Math.imul(h^h>>>13,3266489909);return((h^=h>>>16)>>>0)/4294967296;};}
+/* a stable spot inside the country, so cams from one country spread across it */
+function spotIn(cc,seed){
+  const f=FEAT[ISO2NUM[cc]];
+  if(!f){ const s=SMALL[cc]; if(!s) return null; const r=seeded(seed); return [s[1]+(r()-.5)*.4, s[0]+(r()-.5)*.4]; }
+  const [[x0,y0],[x1,y1]]=d3.geoBounds(f), r=seeded(seed);
+  const wrap=x1<x0;
+  for(let i=0;i<80;i++){
+    let x=x0+r()*((wrap?x1+360:x1)-x0); if(x>180)x-=360;
+    const y=y0+r()*(y1-y0);
+    if(d3.geoContains(f,[x,y])) return [x,y];
+  }
+  return d3.geoCentroid(f);
+}
+const ANIMAL_Q=[
+ ["wildlife live cam 24/7","wild"],["africa waterhole live cam","wild","ZA"],["safari live stream","wild"],["bear cam live","wild"],
+ ["wildlife camera live stream forest","wild"],["Tierwebcam live","wild","DE"],["webcam animaux en direct","wild","FR"],
+ ["eagle nest cam live","nest"],["osprey nest cam live","nest"],["bird feeder cam live","nest"],["owl nest cam live","nest"],
+ ["peregrine falcon cam live","nest"],["bird nest box live stream","nest"],["stork nest live webcam","nest"],["野鳥 ライブカメラ","nest","JP"],
+ ["aquarium live cam","ocean"],["underwater live cam reef","ocean"],["whale live cam","ocean"],
+ ["zoo live cam","zoo"],["panda live 24/7","zoo","CN"],["動物園 ライブカメラ","zoo","JP"],
+ ["puppy cam live","pet"],["kitten cam live","pet"],["farm animals live cam","pet"],["動物 直播 24小時","zoo","TW"]
+];
+const SCENIC_CC=["TW","JP","KR","US","CA","GB","IE","DE","FR","IT","ES","PT","NL","CH","AT","NO","SE","FI","IS","CZ","PL","GR","TR","AU","NZ","TH","PH","ID","BR","MX","AR","ZA"];
+const SCENIC_Q=[["即時影像 live cam","scenic","TW"],["ライブカメラ 24時間","scenic","JP"],["실시간 라이브캠","scenic","KR"],
+  ...SCENIC_CC.filter(c=>!["TW","JP","KR"].includes(c)).map(c=>[`live cam ${regionNameEn(c)} 24/7`,"scenic",c])];
+function regionNameEn(cc){try{return new Intl.DisplayNames(["en"],{type:"region"}).of(cc)}catch(e){return cc}}
+const NOT_CAM=/\b(news|lofi|lo-fi|music|radio|gameplay|gaming|podcast|sermon|church service|stock|trading|crypto|sports? betting)\b|新聞|音樂|for cats|cat tv|relaxing music|sleep music|asmr/i;
+
+const AUTO_KEY="wildcams-auto-v1", KEY_KEY="wildcams-ytkey";
+let ytKey=""; try{ytKey=localStorage.getItem(KEY_KEY)||""}catch(e){}
+let AUTO=null; try{AUTO=JSON.parse(localStorage.getItem(AUTO_KEY)||"null")}catch(e){AUTO=null}
+const AUTO_TTL=20*3600e3;  /* one full refresh uses ~5,700 of the 10,000 free daily units */
+
+async function ytGet(path,params){
+  const u=new URL("https://www.googleapis.com/youtube/v3/"+path);
+  Object.entries({...params,key:ytKey}).forEach(([k,v])=>u.searchParams.set(k,v));
+  const r=await fetch(u.toString()); const j=await r.json();
+  if(j.error){ const reason=(j.error.errors&&j.error.errors[0]&&j.error.errors[0].reason)||""; const e=new Error(j.error.message); e.reason=reason; throw e; }
+  return j;
+}
+async function pool(items,n,fn){ let i=0; const run=async()=>{ while(i<items.length){ const x=items[i++]; await fn(x); } }; await Promise.all(Array.from({length:n},run)); }
+
+async function fetchAuto(onProgress){
+  const queries=[...ANIMAL_Q.map(q=>[...q,"animal"]),...SCENIC_Q.map(q=>[...q,"scenic"])];
+  const found=new Map(); let units=0, done=0;
+  await pool(queries,4,async([q,cat,hint,kind])=>{
+    const j=await ytGet("search",{part:"snippet",type:"video",eventType:"live",maxResults:50,q,safeSearch:"strict"});
+    units+=100; done++;
+    (j.items||[]).forEach(it=>{
+      const id=it.id&&it.id.videoId; if(!id||found.has(id)) return;
+      const title=it.snippet.title.replace(/&amp;/g,"&").replace(/&#39;/g,"'").replace(/&quot;/g,'"');
+      if(NOT_CAM.test(title)) return;
+      found.set(id,{vid:id,title,ch:it.snippet.channelTitle,chId:it.snippet.channelId,cat,kind,hint:hint||null});
+    });
+    onProgress&&onProgress(`搜尋中 ${done}/${queries.length}，找到 ${found.size} 個`);
+  });
+  const ids=[...found.keys()];
+  for(let i=0;i<ids.length;i+=50){
+    const j=await ytGet("videos",{part:"recordingDetails,snippet",id:ids.slice(i,i+50).join(",")}); units+=1;
+    (j.items||[]).forEach(v=>{ const f=found.get(v.id); if(!f) return;
+      if(v.snippet.liveBroadcastContent!=="live"){ found.delete(v.id); return; }
+      const L=v.recordingDetails&&v.recordingDetails.location;
+      if(L&&L.latitude!=null) { f.lat=L.latitude; f.lon=L.longitude; f.exact=true; } });
+  }
+  const chIds=[...new Set([...found.values()].map(f=>f.chId))];
+  const chCountry={};
+  for(let i=0;i<chIds.length;i+=50){
+    const j=await ytGet("channels",{part:"snippet",id:chIds.slice(i,i+50).join(",")}); units+=1;
+    (j.items||[]).forEach(c=>{ chCountry[c.id]=c.snippet.country||null; });
+  }
+  const items=[];
+  found.forEach(f=>{
+    /* the query's country wins for scenic cams; for animals trust the channel's country */
+    const cc=(f.kind==="scenic"?(f.hint||chCountry[f.chId]):(chCountry[f.chId]||f.hint))||null;
+    if(!f.exact){ const p=cc?spotIn(cc,f.vid):null; if(p){f.lon=p[0];f.lat=p[1];} }
+    items.push({...f,cc});
+  });
+  return {t:Date.now(),items,units};
+}
+function autoToCams(){
+  CAMS=CAMS.filter(c=>!c.auto);
+  if(!AUTO||!AUTO.items) return;
+  const have=new Set(CAMS.map(c=>c.key));
+  AUTO.items.forEach(a=>{
+    if(have.has(a.vid)) return;
+    const place=(a.cc?regionName(a.cc):"位置不明")+(a.exact?"":"（大致位置）")+"・"+a.ch;
+    CAMS.push({id:"a"+a.vid,key:a.vid,auto:AUTO.t,title:a.title,place,lat:a.lat??null,lon:a.lon??null,tz:null,
+      cat:[a.cat],embed:`https://www.youtube.com/embed/${a.vid}?autoplay=1&mute=1&rel=0`,watch:`https://www.youtube.com/watch?v=${a.vid}`,
+      vid:a.vid,names:null,note:a.exact?"這個直播有標註拍攝地點。":"位置依頻道所在國家，畫在該國境內的大致位置。",star:false});
+  });
+}
+const autoPanel=document.getElementById("auto"), autoMsg=document.getElementById("autoMsg");
+function autoStatus(){
+  const n=CAMS.filter(c=>c.auto).length, a=CAMS.filter(c=>c.auto&&!c.cat.includes("scenic")).length;
+  document.getElementById("autoBtn").textContent=ytKey?(n?`自動直播 ${n}`:"自動抓直播"):"自動抓直播";
+  if(!AUTO){ document.getElementById("autoInfo").textContent=ytKey?"還沒抓過。":"還沒設定金鑰。"; return; }
+  const d=new Date(AUTO.t);
+  document.getElementById("autoInfo").textContent=`上次更新 ${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}：動物 ${a} 個、景點 ${n-a} 個（用掉約 ${AUTO.units} 點額度，每天 10,000 點）。`;
+}
+async function refreshAuto(force){
+  if(!ytKey||LOCAL) return;
+  if(!force&&AUTO&&Date.now()-AUTO.t<AUTO_TTL) return;
+  const btn=document.getElementById("autoGo"); btn.disabled=true;
+  try{
+    autoMsg.textContent="正在向 YouTube 查詢目前在播的直播…";
+    const res=await fetchAuto(s=>autoMsg.textContent=s);
+    AUTO=res; try{localStorage.setItem(AUTO_KEY,JSON.stringify(AUTO))}catch(e){}
+    autoToCams(); drawDots(); render(); autoStatus();
+    autoMsg.textContent=`完成，抓到 ${res.items.length} 個正在播的直播。`;
+  }catch(e){
+    const why={keyInvalid:"金鑰不正確，請重新複製貼上。",quotaExceeded:"今天的免費額度用完了，台灣時間下午 3 點左右會重置。",forbidden:"這把金鑰不允許從這個網址使用，請檢查金鑰的「網站限制」設定。",accessNotConfigured:"金鑰所在的專案還沒啟用 YouTube Data API v3。",ipRefererBlocked:"這把金鑰的網站限制擋住了這個網址，請把 https://mmllpp772.github.io/* 加進允許清單。"}[e.reason];
+    autoMsg.textContent="抓取失敗："+(why||e.message);
+  }finally{ btn.disabled=false; }
+}
+document.getElementById("autoBtn").onclick=()=>{autoPanel.hidden=false; document.getElementById("ytkey").value=ytKey; autoStatus();};
+document.getElementById("autoClose").onclick=()=>autoPanel.hidden=true;
+document.getElementById("autoSave").onclick=()=>{
+  ytKey=document.getElementById("ytkey").value.trim();
+  try{ ytKey?localStorage.setItem(KEY_KEY,ytKey):localStorage.removeItem(KEY_KEY);}catch(e){}
+  autoMsg.textContent=ytKey?"金鑰已存在這個瀏覽器。":"已清除金鑰。";
+  if(ytKey) refreshAuto(true); else { AUTO=null; try{localStorage.removeItem(AUTO_KEY)}catch(e){} autoToCams(); drawDots(); render(); autoStatus(); }
+};
+document.getElementById("autoGo").onclick=()=>refreshAuto(true);
+if(LOCAL) document.getElementById("autoBtn").hidden=true;
+autoToCams(); drawDots();
 
 /* ---------- UI ---------- */
 const chips=document.getElementById("chips");
@@ -678,7 +863,7 @@ function renderDetail(play){
       <h2>${esc(c.title)}</h2>
       <div class="meta"><span>${esc(c.place)}</span>
         <span class="mono">${lat} ${lon}</span>
-        <span>當地 <span class="mono" id="dtime">${localTime(c.tz)}</span> <span class="pill ${day?"day":"nite"}">${day?"白天":"夜晚"}</span></span></div>
+        <span>當地 <span class="mono" id="dtime">${camTime(c)}</span> <span class="pill ${day?"day":"nite"}">${day?"白天":"夜晚"}</span></span></div>
       ${c.names?`<div class="names"><div class="lbl">牠們的名字</div><p>${esc(c.names)}</p></div>`:""}
       ${c.note?`<p>${esc(c.note)}</p>`:""}
       ${!day?`<p class="season">那邊現在是晚上，畫面可能很暗或只有紅外線影像。</p>`:""}
@@ -727,17 +912,19 @@ function render(){
     const rb=bar.querySelector("#recheck"); if(rb) rb.onclick=()=>startScan("dead");
   }
   if(!items.length && !(view==="dead"&&!offAll.length)){ const e=document.createElement("li"); e.className="empty"; e.textContent=view==="dead"?"失效清單裡沒有符合的直播。":"沒有符合的直播，換個關鍵字試試。"; ul.appendChild(e); }
-  items.forEach(c=>{
+  const LIMIT=300, more=items.length-LIMIT;
+  items.slice(0,LIMIT).forEach(c=>{
     const li=document.createElement("li");
     const day=isDay(c);
     const st=statusOf(c);
     li.innerHTML=`<button class="cam${c.star?" star":""}${c.id===selected?" sel":""}${isOff(c)?" off":""}">
       <span class="sw"></span>
       <span><span class="t">${esc(c.title)}${c.embed?"":' <span class="ext">外連</span>'}</span><br><span class="w">${esc(c.place)}</span></span>
-      <span class="tm">${localTime(c.tz)}<br>${st==="ok"?'<span class="st ok">● 在播</span>':isOff(c)?`<span class="st bad">${checkedAt(c)} 失效</span>`:(day?"白天":"夜晚")}</span></button>`;
+      <span class="tm">${camTime(c)}<br>${st==="ok"?'<span class="st ok">● 在播</span>':isOff(c)?`<span class="st bad">${checkedAt(c)} 失效</span>`:(day?"白天":"夜晚")}</span></button>`;
     li.firstElementChild.onclick=()=>select(c.id,true);
     ul.appendChild(li);
   });
+  if(more>0){ const e=document.createElement("li"); e.className="empty"; e.textContent=`還有 ${more} 個沒列出來，用上方分類、搜尋，或直接點地圖找。`; ul.appendChild(e); }
   document.getElementById("nLive").textContent=CAMS.length-offAll.length;
   document.getElementById("nDead").textContent=offAll.length;
   document.getElementById("vLive").setAttribute("aria-selected",view==="live");
@@ -820,11 +1007,13 @@ function tick(){
   document.getElementById("tpe").textContent=localTime("Asia/Taipei");
   document.getElementById("utc").textContent=now.toISOString().slice(11,16);
   const c=CAMS.find(x=>x.id===selected), dt=document.getElementById("dtime");
-  if(c&&dt) dt.textContent=localTime(c.tz);
+  if(c&&dt) dt.textContent=camTime(c);
 }
 if(LOCAL) document.getElementById("localnote").hidden=false;
 {const ok=CAMS.find(c=>c.embed&&statusOf(c)==="ok"); if(ok) selected=ok.id;}
+autoStatus();
 tick(); render(); renderDetail(false); updScan();
+refreshAuto(false);
 setInterval(()=>{tick();drawNight();render()},60000);
 </script>
 
