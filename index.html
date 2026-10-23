@@ -108,6 +108,10 @@ button{font:inherit;color:inherit}
 @media (max-width:900px){.detail{position:static}}
 .player{position:relative;aspect-ratio:16/9;background:#050b14;border-radius:10px;overflow:hidden;display:grid;place-items:center}
 .player iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.twbox{position:absolute;inset:0}
+.twbox iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.slot .twbox,.slot .twbox iframe{pointer-events:none}
+.tn.tw::after{content:"Twitch";position:absolute;right:2px;bottom:2px;font-size:9px;line-height:1;padding:2px 3px;border-radius:3px;background:#9146ff;color:#fff}
 .thumb{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.5}
 .playbtn{position:relative;z-index:1;background:none;border:0;cursor:pointer;color:#fff;display:flex;flex-direction:column;align-items:center;gap:14px;padding:20px;text-align:center;font-weight:500}
 .playbtn .tri{width:72px;height:72px;border-radius:50%;border:1.5px solid rgba(255,255,255,.85);position:relative;backdrop-filter:blur(4px);background:rgba(255,255,255,.08)}
@@ -228,7 +232,7 @@ footer a{color:var(--k)}
   </div>
 
   <footer>
-    <p>清單裡共有 <span id="totalN">1161</span> 個直播網址，整理自 2026 年 10 月的 YouTube。直播常會重開換網址，所以第一次使用請按「檢查哪些在播」：網頁會逐一試播，播不出來的自動移到失效清單，日後重新檢查能播的會自動加回來。檢查結果只存在你這個瀏覽器。</p>
+    <p>清單裡共有 <span id="totalN">1230</span> 個直播網址，整理自 2026 年 10 月的 YouTube。直播常會重開換網址，所以第一次使用請按「檢查哪些在播」：網頁會逐一試播，播不出來的自動移到失效清單，日後重新檢查能播的會自動加回來。檢查結果只存在你這個瀏覽器。</p>
     <p>金色點是有名字的明星動物；有外圈的點是你這台瀏覽器確認過在播的；地圖上的陰影是此刻的夜晚，金色細線是晨昏線。</p>
   </footer>
 </div>
@@ -980,6 +984,75 @@ const CAMS_RAW = [
 ["MyLiveStreams 大駝鹿遷徙","瑞典・大駝鹿遷徙",63.245,17.024,"Europe/Stockholm","wild",null,"https://www.youtube.com/channel/UCbReuV9fmkc7CNArzosVD2A/live"],
 ["企鵝群（群落視角）","美國（企鵝）",36.055,-86.04,"America/Chicago","zoo","bV4EiHr53ek",null],
 ["蒙特雷灣水族館 海獺（第二路）","美國加州・蒙特雷灣水族館",36.581,-121.893,"America/Los_Angeles","ocean","LrO-tgqYXXI",null],
+["Alveus 動物保護區 24 小時","美國德州・Alveus 保護區（Twitch）",30.327,-97.902,"America/Chicago","zoo","tw:alveussanctuary",null],
+["海洋哺乳動物救援中心（海豹寶寶）","加拿大卑詩・溫哥華（Twitch）",49.167,-123.099,"America/Vancouver","ocean","tw:marinemammalrescue",null],
+["內埔薑母鴨（鴨子）","台灣屏東・內埔（Twitch）",22.659,120.6,"Asia/Taipei","pet","tw:neipuduck",null],
+["狼保育中心","美國紐約・狼保育中心（Twitch）",41.199,-73.573,"America/New_York","wild","tw:wolfconservationcenter",null],
+["CritterVision 野生動物","美國（CritterVision，Twitch）",41.997,-90.02,"America/Chicago","wild","tw:crittervision",null],
+["CritterVision 森林","美國（CritterVision，Twitch）",42.04,-89.971,"America/Chicago","wild","tw:crittervisionforest",null],
+["WildLifeCam 野生動物棲地","美國（Twitch 野生動物棲地）",36.521,-86.45,"America/Chicago","wild","tw:wildlifecam",null],
+["浣熊","美國（Twitch 野生動物棲地）",36.527,-86.458,"America/Chicago","wild","tw:raccsgonewild",null],
+["Snake Discovery 爬蟲","美國明尼蘇達・Snake Discovery（Twitch）",45.099,-93.443,"America/Chicago","pet","tw:snakediscovery",null],
+["世界鳥類保護區","美國密蘇里・世界鳥類保護區（Twitch）",38.509,-90.549,"America/Chicago","zoo","tw:theworldbirdsanctuary",null],
+["那不勒斯鳥園","美國佛羅里達・那不勒斯鳥園（Twitch）",26.185,-81.761,"America/New_York","zoo","tw:birdgardensofnaples",null],
+["紫崖燕群落","美國賓州・紫崖燕保育協會（Twitch）",42.037,-80.124,"America/New_York","nest","tw:purplemartinconservation",null],
+["加州鳥類餵食器","美國加州（Twitch 鳥類）",37.494,-121.482,"America/Los_Angeles","nest","tw:californiabirbs",null],
+["Cute Avalanche 寄養貓咖啡","美國加州・洛杉磯（Twitch 寄養貓）",34.033,-118.25,"America/Los_Angeles","pet","tw:cuteavalanche",null],
+["林肯郡野生動物園","英國・林肯郡野生動物園（Twitch）",53.114,0.338,"Europe/London","zoo","tw:lincolnshirewildlifepark",null],
+["Kingsdown 雪貂","英國（Twitch 雪貂）",51.246,1.415,"Europe/London","pet","tw:kingsdownferrets",null],
+["Dalscone 農場","英國蘇格蘭（Twitch 農場）",55.149,-3.644,"Europe/London","pet","tw:dalscone",null],
+["葡萄牙農場","葡萄牙（Twitch 農場）",39.494,-7.987,"Europe/Lisbon","pet","tw:oneportuguesefarm",null],
+["Hofzeit 農場計畫","德國（Twitch）",51,10.002,"Europe/Berlin","pet","tw:hofzeitprojekt",null],
+["動物收容所","德國（Twitch）",51.014,9.979,"Europe/Berlin","pet","tw:tierheimtiereev",null],
+["小森林女巫的動物","德國（Twitch）",51.038,10.023,"Europe/Berlin","pet","tw:diekleinewaldhexe",null],
+["Bacon 與 Schnitzel 豬","德國（Twitch）",50.969,10.039,"Europe/Berlin","pet","tw:bacon_und_schnitzel",null],
+["昆蟲飼育","法國（Twitch 昆蟲）",46.525,2.492,"Europe/Paris","pet","tw:rock_n_insectes",null],
+["ぬこまろ 貓咪","日本（Twitch 貓）",35.563,139.639,"Asia/Tokyo","pet","tw:nukomaro2020",null],
+["にゃんたま 貓咪頻道","日本（Twitch 貓）",35.592,139.568,"Asia/Tokyo","pet","tw:nyantamach",null],
+["ひだまり號 貓咪","日本（Twitch 貓）",35.646,139.649,"Asia/Tokyo","pet","tw:hidamarigo",null],
+["Kohdei 動物","日本（Twitch 貓）",35.636,139.63,"Asia/Tokyo","pet","tw:kohdei",null],
+["Tomasu 動物","日本（Twitch 貓）",35.619,139.609,"Asia/Tokyo","pet","tw:tomasujp",null],
+["Yunikosa 動物","日本（Twitch 貓）",35.626,139.548,"Asia/Tokyo","pet","tw:yunikosa",null],
+["Dash 鴨子","美國（Twitch 家禽）",40.019,-83.956,"America/New_York","pet","tw:dashducks",null],
+["我們的雞舍","美國（Twitch 家禽）",39.948,-84.05,"America/New_York","pet","tw:ourchickenlife",null],
+["鴨子教","美國（Twitch 家禽）",39.968,-83.983,"America/New_York","pet","tw:cultoftheducks",null],
+["Duckville 鴨子村","美國（Twitch 家禽）",40.057,-84.015,"America/New_York","pet","tw:duckvilleusa",null],
+["Hennsylvania 雞舍","美國（Twitch 家禽）",39.994,-83.963,"America/New_York","pet","tw:hennsylvania",null],
+["Nate Petroski 農場","美國（Twitch 家禽）",39.982,-84.026,"America/New_York","pet","tw:natepetroski",null],
+["WP 農場","美國（Twitch 家禽）",40.036,-83.95,"America/New_York","pet","tw:wpfarm",null],
+["Ferret Software 雪貂","美國（Twitch 小寵物）",39.004,-94.959,"America/Chicago","pet","tw:ferretsoftware",null],
+["Furball 農場","美國（Twitch 小寵物）",38.981,-94.995,"America/Chicago","pet","tw:furball_farm",null],
+["Q Bunny 兔子","美國（Twitch 小寵物）",39.038,-95.045,"America/Chicago","pet","tw:qbunnytv",null],
+["August 兔子","美國（Twitch 小寵物）",39.004,-95.01,"America/Chicago","pet","tw:augustbuns",null],
+["兔子電視","美國（Twitch 小寵物）",39.019,-94.948,"America/Chicago","pet","tw:rabbittelevision",null],
+["Butterfly 的兔子","美國（Twitch 小寵物）",38.986,-95.018,"America/Chicago","pet","tw:butterflysbunnies",null],
+["英雄老鼠","美國（Twitch 小寵物）",39.001,-94.958,"America/Chicago","pet","tw:herorats",null],
+["烏龜","美國（Twitch 小寵物）",38.981,-94.988,"America/Chicago","pet","tw:turtlesandchill",null],
+["米蝦 24 小時","美國（Twitch 小寵物）",38.973,-95.043,"America/Chicago","pet","tw:shrimps247",null],
+["珊瑚缸","美國（Twitch 小寵物）",38.972,-95.024,"America/Chicago","pet","tw:reefandchill",null],
+["Ram 的珊瑚缸","美國（Twitch 小寵物）",39.039,-94.998,"America/Chicago","pet","tw:ramsreef",null],
+["城市貓咪 TV","美國（Twitch 小寵物）",39.004,-94.979,"America/Chicago","pet","tw:city_cat_tv",null],
+["街貓","美國（Twitch 小寵物）",39.009,-94.976,"America/Chicago","pet","tw:street_cat_love",null],
+["幼貓俱樂部","美國（Twitch 小寵物）",38.954,-94.969,"America/Chicago","pet","tw:kittenclubhouse",null],
+["J 與 D 的貓","美國（Twitch 小寵物）",39.01,-94.96,"America/Chicago","pet","tw:jundcats",null],
+["Hoot House","美國（Twitch 小寵物）",38.969,-94.972,"America/Chicago","pet","tw:hoothouselivestream",null],
+["我們的動物園","美國（Twitch 小寵物）",39.024,-95.02,"America/Chicago","pet","tw:streamingourzoo",null],
+["花園動物園","美國（Twitch 小寵物）",39.034,-94.984,"America/Chicago","pet","tw:gardenzoo",null],
+["Hula 與 Hoops 的家","美國（Twitch 小寵物）",39.03,-94.959,"America/Chicago","pet","tw:hula_n_hoopsplace",null],
+["山羊女孩","美國（Twitch 小寵物）",39.012,-95.049,"America/Chicago","pet","tw:thegoatchick",null],
+["Tangle 綿羊","美國（Twitch 小寵物）",38.994,-94.962,"America/Chicago","pet","tw:tanglesheep",null],
+["Rooville","美國（Twitch 小寵物）",39.033,-95.003,"America/Chicago","pet","tw:rooville",null],
+["鴕鳥","美國（Twitch 小寵物）",38.961,-95.06,"America/Chicago","pet","tw:ostrichplug",null],
+["小動物灣","美國（Twitch 小寵物）",39.056,-95.052,"America/Chicago","pet","tw:critter_cove",null],
+["BarkTok 狗狗","美國（Twitch 小寵物）",39.055,-94.945,"America/Chicago","pet","tw:barktok",null],
+["Ruby Roo","美國（Twitch 小寵物）",39.01,-94.979,"America/Chicago","pet","tw:rubyroo",null],
+["Ted 動物","美國（Twitch 小寵物）",38.977,-95.005,"America/Chicago","pet","tw:ted601",null],
+["Briony 動物","美國（Twitch 小寵物）",38.944,-95.016,"America/Chicago","pet","tw:brionykay",null],
+["蜜蜂聚會","美國（Twitch 小寵物）",38.977,-95.039,"America/Chicago","pet","tw:thehoneybeehangout",null],
+["動物直播 drwd40","美國（Twitch 小寵物）",38.989,-94.984,"America/Chicago","pet","tw:drwd40",null],
+["動物直播 TacoOfWar","美國（Twitch 小寵物）",39.044,-95.053,"America/Chicago","pet","tw:tacoofwar_",null],
+["動物直播 GoEndYourStream","美國（Twitch 小寵物）",38.947,-95.048,"America/Chicago","pet","tw:goendyourstreamtv",null],
+["動物園管理員 Ruben","美國（Twitch 動物園管理員）",40.008,-79.98,"America/New_York","zoo","tw:rubenzookeeper",null],
 ["西門町","台灣台北",25.066,121.532,"Asia/Taipei","scenic","P34X5tiBvno",null],
 ["象山看台北 4K","台灣台北",25.018,121.582,"Asia/Taipei","scenic","z_fY1pj1VBw",null],
 ["台北河岸夜景","台灣台北",25.043,121.572,"Asia/Taipei","scenic","pmM2CeSAx0I",null],
@@ -1431,11 +1504,13 @@ function regionOf(tz,lon){
 }
 const CAMS = CAMS_RAW.map((r,i)=>{
   const [title,place,lat,lon,tz,cat,yt,url,names,note]=r;
-  const embed=yt?`https://www.youtube.com/embed/${yt}?autoplay=1&mute=1&rel=0&playsinline=1`:null;
-  const watch=yt?`https://www.youtube.com/watch?v=${yt}`:url;
+  const tw=yt&&yt.startsWith("tw:")?yt.slice(3):null;
+  const embed=tw?`https://player.twitch.tv/?channel=${tw}&parent=${location.hostname}&muted=true&autoplay=true`
+    :yt?`https://www.youtube.com/embed/${yt}?autoplay=1&mute=1&rel=0&playsinline=1`:null;
+  const watch=tw?`https://www.twitch.tv/${tw}`:yt?`https://www.youtube.com/watch?v=${yt}`:url;
   const cats=cat.split(",");
   return {id:"c"+i,key:yt||url,title,place,lat,lon,tz,cat:cats,kind:cats.includes("scenic")?"scenic":"animal",
-    region:regionOf(tz,lon),embed,watch,vid:yt,names:names||null,note:note||null,star:!!names};
+    region:regionOf(tz,lon),embed,watch,vid:tw?null:yt,tw,names:names||null,note:note||null,star:!!names};
 });
 
 /* ---------- live status, remembered in this browser ---------- */
@@ -1463,6 +1538,23 @@ function probe(iframe,onResult,ms){
     onError:()=>finish("dead") }}); }catch(err){} });
   return reason=>{ if(reason) finish(reason); else {done=true; clearTimeout(timer);} };
 }
+/* Twitch: the embed script builds the player inside a box and reports PLAYING / OFFLINE */
+let twLoad=null;
+function loadTW(){ return twLoad||(twLoad=new Promise((res,rej)=>{const s=document.createElement("script"); s.src="https://player.twitch.tv/js/embed/v1.js"; s.onload=res; s.onerror=rej; document.head.appendChild(s);})); }
+function probeTW(box,c,onResult,ms){
+  let done=false;
+  const finish=s=>{if(done)return; done=true; clearTimeout(timer); onResult(s);};
+  const timer=setTimeout(()=>finish("stalled"),ms);
+  loadTW().then(()=>{ if(done)return; try{
+    const p=new Twitch.Player(box,{channel:c.tw,parent:[location.hostname],muted:true,autoplay:true,width:"100%",height:"100%"});
+    p.addEventListener(Twitch.Player.PLAYING,()=>finish("ok"));
+    p.addEventListener(Twitch.Player.OFFLINE,()=>finish("dead"));
+  }catch(err){} }).catch(()=>{});
+  return reason=>{ if(reason) finish(reason); else {done=true; clearTimeout(timer);} };
+}
+function frameHTML(c,attrs){ return c.tw?`<div class="twbox" ${attrs}></div>`:`<iframe src="${esc(apiSrc(c))}" ${attrs} allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>`; }
+function probeAny(el,c,onResult,ms){ return c.tw?probeTW(el,c,onResult,ms):probe(el,onResult,ms); }
+function thumbURL(c,big){ return c.tw?`https://static-cdn.jtvnw.net/previews-ttv/live_user_${c.tw.toLowerCase()}-${big?"640x360":"320x180"}.jpg`:c.vid?`https://i.ytimg.com/vi/${c.vid}/${big?"hqdefault":"mqdefault"}.jpg`:null; }
 
 const FILTERS={
   animal:[
@@ -1612,10 +1704,10 @@ function renderDetail(play){
   const c=CAMS.find(x=>x.id===selected); if(!c){$("detail").innerHTML="";return;}
   const day=isDay(c);
   const lat=`${Math.abs(c.lat).toFixed(2)}°${c.lat>=0?"N":"S"}`, lon=`${Math.abs(c.lon).toFixed(2)}°${c.lon>=0?"E":"W"}`;
-  const thumb=c.vid?`<img class="thumb" src="https://i.ytimg.com/vi/${c.vid}/hqdefault.jpg" alt="" onerror="this.remove()">`:"";
+  const thumb=thumbURL(c,true)?`<img class="thumb" src="${thumbURL(c,true)}" alt="" onerror="this.remove()">`:"";
   let player;
   if(c.embed && LOCAL) player=`${thumb}<button class="playbtn" id="popNow"><span class="tri"></span>播放<small>會在小視窗開啟</small></button>`;
-  else if(c.embed && play) player=`<iframe id="ytmain" src="${esc(apiSrc(c))}" title="${esc(c.title)}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe><div class="perr" id="perr" hidden></div>`;
+  else if(c.embed && play) player=`${frameHTML(c,`id="ytmain" title="${esc(c.title)}"`)}<div class="perr" id="perr" hidden></div>`;
   else if(c.embed) player=`${thumb}<button class="playbtn" id="playNow"><span class="tri"></span>播放</button>`;
   else player=`<div class="noembed">這個直播只能在 YouTube 頻道頁播放<br><a class="btn solid" href="${esc(c.watch)}" target="_blank" rel="noopener">開啟頻道直播 ↗</a></div>`;
   const st=statusOf(c);
@@ -1632,20 +1724,21 @@ function renderDetail(play){
       ${!day&&c.kind==="animal"?`<p class="hint">那邊現在是晚上，畫面可能很暗或只有紅外線。</p>`:""}
       <div class="acts">
         ${nx&&nx.id!==c.id?`<button class="btn solid" id="goNext">下一個：${esc(nx.title.length>14?nx.title.slice(0,14)+"…":nx.title)}</button>`:""}
-        <a class="btn" href="${esc(c.watch)}" target="_blank" rel="noopener">在 YouTube 開啟 ↗</a>
+        <a class="btn" href="${esc(c.watch)}" target="_blank" rel="noopener">在 ${c.tw?"Twitch":"YouTube"} 開啟 ↗</a>
       </div>
     </div>`;
   const pb=$("playNow"); if(pb) pb.onclick=()=>renderDetail(true);
   const gn=$("goNext"); if(gn) gn.onclick=()=>select(nx.id,true);
   if(mainStop){mainStop(); mainStop=null;}
   const fr=$("ytmain");
-  if(fr) mainStop=probe(fr,s=>{
+  if(fr) mainStop=probeAny(fr,c,s=>{
     if(s==="stalled") return;
     setStatus(c,s); render();
     if(s==="dead"){
       const alt=nextOf(c);
       const pe=$("perr"); if(!pe)return;
-      pe.innerHTML=`<b>這場直播已經結束了</b><span>頻道多半換了新的直播網址，已移到失效清單。</span>
+      pe.innerHTML=c.tw?`<b>這個 Twitch 頻道現在沒有在直播</b><span>已移到失效清單，之後重新檢查時如果開播會自動加回來。</span>
+        <div class="pbtns"><a class="btn" href="${esc(c.watch)}" target="_blank" rel="noopener">到 Twitch 看看 ↗</a>`:`<b>這場直播已經結束了</b><span>頻道多半換了新的直播網址，已移到失效清單。</span>
         <div class="pbtns"><a class="btn" href="${esc(c.watch)}" target="_blank" rel="noopener">到 YouTube 找新網址 ↗</a>
         ${alt&&alt.id!==c.id?`<button class="btn" id="goAlt">改看${esc(alt.title)}</button>`:""}</div>`;
       pe.hidden=false;
@@ -1685,7 +1778,8 @@ function render(){
   const frag=document.createDocumentFragment();
   items.slice(0,limit).forEach(c=>{
     const li=document.createElement("li"); const st=statusOf(c);
-    const tn=c.vid?`<span class="tn"><img loading="lazy" src="https://i.ytimg.com/vi/${c.vid}/mqdefault.jpg" alt=""></span>`:`<span class="tn ext">頻道</span>`;
+    const tu=thumbURL(c,false);
+    const tn=tu?`<span class="tn${c.tw?" tw":""}"><img loading="lazy" src="${tu}" alt="" onerror="this.remove()"></span>`:`<span class="tn ext">頻道</span>`;
     li.innerHTML=`<button class="cam${c.star?" star":""}${c.id===selected?" sel":""}${isOff(c)?" off":""}">${tn}
       <span><span class="t">${esc(c.title)}</span><span class="w">${esc(c.place)}</span></span>
       <span class="tm">${localTime(c.tz)}<br>${st==="ok"?'<span class="st-ok">在播</span>':isOff(c)?`<span class="st-bad">${checkedAt(c)} 失效</span>`:(isDay(c)?"白天":"夜晚")}</span></button>`;
@@ -1743,10 +1837,10 @@ function runSlot(i){
   if(document.hidden){ setTimeout(()=>runSlot(i),1000); return; }
   let c=scan.queue.shift(), second=false;
   if(!c && scan.retry.length){ c=scan.retry.shift(); second=true; }
-  if(!c){ slot.innerHTML=""; if(!document.querySelector(".slot iframe")){ scan.running=false; $("scanStop").hidden=true;
+  if(!c){ slot.innerHTML=""; if(!document.querySelector(".slot iframe, .slot .twbox")){ scan.running=false; $("scanStop").hidden=true;
       $("scanMsg").textContent=scan.mode==="dead"?`重新檢查完成，救回 ${scan.revived} 個，已回到直播清單。`:"檢查完成。沒播出畫面的已移到失效清單。"; updScan(); render(); } return; }
-  slot.innerHTML=`<iframe src="${esc(apiSrc(c))}" allow="autoplay; encrypted-media" referrerpolicy="strict-origin-when-cross-origin" title="檢查 ${esc(c.title)}"></iframe><span>${second?"重試：":""}${esc(c.title)}</span>`;
-  const stop=probe(slot.querySelector("iframe"),s=>{
+  slot.innerHTML=`${frameHTML(c,`title="檢查 ${esc(c.title)}"`)}<span>${second?"重試：":""}${esc(c.title)}</span>`;
+  const stop=probeAny(slot.querySelector("iframe, .twbox"),c,s=>{
     scan.active.delete(i); slot.innerHTML="";
     if(s==="interrupted"){ (second?scan.retry:scan.queue).unshift(c); }
     else if(s==="stalled" && !second){ scan.retry.push(c); }
