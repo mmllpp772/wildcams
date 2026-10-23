@@ -178,6 +178,11 @@ button{font:inherit;color:inherit}
 #scanOut{width:100%;height:80px;font-size:12px;margin-bottom:8px;background:var(--abyss);color:var(--ink);border:1px solid var(--line);border-radius:6px}
 .smodes,.sbtns{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
 .smodes .btn,.sbtns .btn{font-size:13px;padding:5px 12px}
+.viewmsg{margin:14px 0 0;font-size:14px;color:var(--muted)}
+.viewmsg button{background:none;border:0;color:var(--k);cursor:pointer;padding:0;font-size:14px;text-decoration:underline}
+.vw{color:var(--star);font-weight:500}
+.klabel{display:block;font-size:13px;margin:10px 0 4px}
+#ytkey{width:100%;font-size:13px;padding:8px 10px;border-radius:8px;border:1px solid var(--line);background:var(--abyss);color:var(--ink);margin-bottom:8px}
 .localnote{margin:14px 0 0;padding:10px 14px;border-radius:8px;background:color-mix(in srgb,var(--star) 12%,transparent);font-size:14px;max-width:80ch}
 footer{padding-bottom:40px;font-size:13px;color:var(--muted);max-width:86ch}
 footer p{margin:0 0 8px}
@@ -209,12 +214,14 @@ footer a{color:var(--k)}
 
 <div class="pad">
   <p class="localnote" id="localnote" hidden>你是直接從電腦打開這個檔案，YouTube 不允許這樣嵌入，所以影片會在小視窗開啟。用 GitHub Pages 的網址打開就能在頁面裡播。</p>
+  <p class="viewmsg" id="viewMsg" hidden></p>
   <div class="controls">
     <div class="chips" id="chips" role="group" aria-label="篩選"></div>
     <div class="tools">
       <label class="switch"><input type="checkbox" id="onlyOk">只看確認在播</label>
       <label class="search"><span class="sr">搜尋直播</span><input id="q" type="search" placeholder="搜尋熊貓、老鷹、富士山…" autocomplete="off"></label>
       <button class="btn" id="luckyBtn">隨機看一個</button>
+      <button class="btn" id="topBtn">看最多人在看的</button>
       <button class="btn solid" id="scanBtn">檢查哪些在播</button>
     </div>
   </div>
@@ -237,6 +244,14 @@ footer a{color:var(--k)}
   </footer>
 </div>
 
+<div class="scan" id="vpanel" hidden role="dialog" aria-label="觀看人數">
+  <div class="shead"><b>觀看人數</b><button class="x" id="vClose" aria-label="關閉">×</button></div>
+  <p class="smsg">Twitch 的人數不用設定，直接就能查。YouTube 的人數要用 YouTube Data API 金鑰才查得到；金鑰免費，只存在你這個瀏覽器。查一次全部 YouTube 直播大約用 20 點，每天免費額度 10,000 點。查人數的同時也會順便知道哪些直播已經結束，結束的會直接移到失效清單。</p>
+  <label class="klabel" for="ytkey">YouTube API 金鑰（可不填）</label>
+  <input id="ytkey" type="text" autocomplete="off" spellcheck="false" placeholder="AIza…">
+  <div class="sbtns"><button class="btn solid" id="vSave">儲存並查詢人數</button></div>
+  <p class="snum" id="vInfo"></p>
+</div>
 <div class="scan" id="scan" hidden role="dialog" aria-label="檢查直播">
   <div class="shead"><b>檢查直播</b><button class="x" id="scanClose" aria-label="關閉">×</button></div>
   <div class="sbar"><i id="scanBar"></i></div>
@@ -1574,7 +1589,7 @@ const FILTERS={
 };
 let kind=store.get("wildcams-kind")==="scenic"?"scenic":"animal";
 let filter="all", query="", onlyOk=false, sortMode=store.get("wildcams-sort")||"live", view="live", limit=200;
-const SORTS={live:"在播優先",day:"白天優先",place:"依地區"};
+const SORTS={live:"在播優先",viewers:"人數最多",day:"白天優先",place:"依地區"};
 let selected=null;
 const shown=c=>view==="dead"?isOff(c):!isOff(c);
 
@@ -1666,6 +1681,57 @@ $("luckyBtn").onclick=()=>{
   const good=pool.filter(c=>statusOf(c)==="ok"); const from=good.length?good:pool;
   if(from.length) select(from[Math.floor(Math.random()*from.length)].id,true,true);
 };
+/* ---------- viewer counts: Twitch via DecAPI (no key), YouTube via Data API (optional key) ---------- */
+const VIEW={}; let viewAt=0, viewBusy=null;
+let ytKey=store.get("wildcams-ytkey")||"";
+const fmtN=n=>n>=10000?(n/10000).toFixed(n>=100000?0:1)+" 萬":n.toLocaleString("zh-TW");
+async function pool(items,n,fn){let i=0;await Promise.all(Array.from({length:n},async()=>{while(i<items.length){const x=items[i++];try{await fn(x)}catch(e){}}}));}
+async function fetchViewers(){
+  const notes=[];
+  const tws=CAMS.filter(c=>c.tw);
+  await pool(tws,4,async c=>{
+    const t=(await (await fetch(`https://decapi.me/twitch/viewercount/${c.tw}`)).text()).trim();
+    if(/^\d+$/.test(t)){ VIEW[c.key]=+t; if(statusOf(c)!=="ok") setStatus(c,"ok"); }
+    else if(/offline/i.test(t)){ VIEW[c.key]=0; setStatus(c,"dead"); }
+  });
+  if(ytKey){
+    const yts=CAMS.filter(c=>c.vid), byId={}; yts.forEach(c=>byId[c.vid]=c);
+    for(let i=0;i<yts.length;i+=50){
+      const ids=yts.slice(i,i+50).map(c=>c.vid);
+      const j=await (await fetch(`https://www.googleapis.com/youtube/v3/videos?part=liveStreamingDetails&id=${ids.join(",")}&key=${encodeURIComponent(ytKey)}`)).json();
+      if(j.error){ notes.push("YouTube 金鑰有問題："+(j.error.message||"").slice(0,80)); break; }
+      const seen=new Set();
+      (j.items||[]).forEach(v=>{ seen.add(v.id); const c=byId[v.id], d=v.liveStreamingDetails;
+        if(d&&d.concurrentViewers!=null&&!d.actualEndTime){ VIEW[c.key]=+d.concurrentViewers; if(statusOf(c)!=="ok") setStatus(c,"ok"); }
+        else if(d&&d.actualEndTime){ VIEW[c.key]=0; setStatus(c,"dead"); } });
+      ids.forEach(id=>{ if(!seen.has(id)){ VIEW[byId[id].key]=0; setStatus(byId[id],"dead"); } });   /* deleted or private */
+    }
+  } else notes.push("YouTube 直播沒有人數（要設定金鑰）");
+  viewAt=Date.now();
+  return notes;
+}
+function refreshViewers(){ if(!viewBusy) viewBusy=fetchViewers().finally(()=>{viewBusy=null}); return viewBusy; }
+function viewMsg(html){ const m=$("viewMsg"); m.innerHTML=html; m.hidden=!html; const b=m.querySelector("button"); if(b) b.onclick=openVPanel; }
+function openVPanel(){ $("vpanel").hidden=false; $("ytkey").value=ytKey; $("vInfo").textContent=viewAt?`上次查詢：${new Date(viewAt).toLocaleTimeString("zh-TW",{hour:"2-digit",minute:"2-digit"})}`:""; }
+$("vClose").onclick=()=>$("vpanel").hidden=true;
+$("vSave").onclick=async()=>{
+  ytKey=$("ytkey").value.trim(); store.set("wildcams-ytkey",ytKey);
+  $("vInfo").textContent="查詢中…"; const notes=await refreshViewers();
+  const n=Object.values(VIEW).filter(v=>v>0).length;
+  $("vInfo").textContent=`查到 ${n} 個直播的人數。`+(notes.length?" "+notes.join("；"):"");
+  sortMode="viewers"; render(); renderDetail(false);
+};
+$("topBtn").onclick=async()=>{
+  const b=$("topBtn"); b.disabled=true; b.textContent="查詢人數中…";
+  let notes=[];
+  try{ if(Date.now()-viewAt>180000) notes=await refreshViewers(); }finally{ b.disabled=false; b.textContent="看最多人在看的"; }
+  sortMode="viewers"; store.set("wildcams-sort",sortMode);
+  const pool=CAMS.filter(c=>c.kind===kind&&c.embed&&(VIEW[c.key]||0)>0).sort((a,b)=>VIEW[b.key]-VIEW[a.key]);
+  if(pool.length){ select(pool[0].id,true,true); viewMsg(`現在最多人在看：${pool[0].title}，${fmtN(VIEW[pool[0].key])} 人。清單已改成依人數排序。`+(ytKey?"":` YouTube 直播的人數要<button type="button">設定金鑰</button>才查得到。`)); }
+  else { render(); viewMsg(kind==="scenic"&&!ytKey?`景點直播都在 YouTube 上，要<button type="button">設定 YouTube 金鑰</button>才查得到人數。`:`目前查不到人數。`+(ytKey?"":`<button type="button">設定 YouTube 金鑰</button>可以查 YouTube 直播。`)); }
+};
+setInterval(()=>{ if(viewAt&&!document.hidden&&Date.now()-viewAt>300000) refreshViewers().then(()=>render()); },60000);
+
 $("themeBtn").onclick=()=>{
   const cur=document.documentElement.dataset.theme||"dark";
   const nx=cur==="light"?"dark":"light"; document.documentElement.dataset.theme=nx; store.set("wildcams-theme",nx);
@@ -1682,6 +1748,7 @@ function matches(c){
 }
 function sorted(items){
   if(sortMode==="place") return items;
+  if(sortMode==="viewers") return items.map((c,i)=>[c,VIEW[c.key]||0,i]).sort((a,b)=>b[1]-a[1]||a[2]-b[2]).map(x=>x[0]);
   const score=c=>sortMode==="live"?(statusOf(c)==="ok"?2:0)+(isDay(c)?1:0):(isDay(c)?2:0)+(statusOf(c)==="ok"?1:0);
   return items.map((c,i)=>[c,score(c),i]).sort((a,b)=>b[1]-a[1]||a[2]-b[2]).map(x=>x[0]);
 }
@@ -1721,7 +1788,7 @@ function renderDetail(play){
     <div class="dinfo">
       <div class="where">${esc(c.place)}</div>
       <h2>${esc(c.title)}</h2>
-      <div class="facts"><span>當地 <b id="dtime">${localTime(c.tz)}</b>，${day?"白天":"夜晚"}</span><span>${lat}　${lon}</span>
+      <div class="facts">${VIEW[c.key]>0?`<span class="vw">${fmtN(VIEW[c.key])} 人正在看</span>`:""}<span>當地 <b id="dtime">${localTime(c.tz)}</b>，${day?"白天":"夜晚"}</span><span>${lat}　${lon}</span>
         <span>${st==="ok"?`<span class="st-ok">${checkedAt(c)} 確認在播</span>`:isOff(c)?`<span class="st-bad">${checkedAt(c)} 檢查時沒播出來</span>`:"還沒檢查"}</span></div>
       ${c.names?`<div class="names"><div class="lbl">牠們的名字</div><p>${esc(c.names)}</p></div>`:""}
       ${c.note?`<p>${esc(c.note)}</p>`:""}
@@ -1786,7 +1853,7 @@ function render(){
     const tn=tu?`<span class="tn${c.tw?" tw":""}"><img loading="lazy" src="${tu}" alt="" onerror="this.remove()"></span>`:`<span class="tn ext">頻道</span>`;
     li.innerHTML=`<button class="cam${c.star?" star":""}${c.id===selected?" sel":""}${isOff(c)?" off":""}">${tn}
       <span><span class="t">${esc(c.title)}</span><span class="w">${esc(c.place)}</span></span>
-      <span class="tm">${localTime(c.tz)}<br>${st==="ok"?'<span class="st-ok">在播</span>':isOff(c)?`<span class="st-bad">${checkedAt(c)} 失效</span>`:(isDay(c)?"白天":"夜晚")}</span></button>`;
+      <span class="tm">${localTime(c.tz)}<br>${VIEW[c.key]>0?`<span class="vw">${fmtN(VIEW[c.key])} 人在看</span>`:st==="ok"?'<span class="st-ok">在播</span>':isOff(c)?`<span class="st-bad">${checkedAt(c)} 失效</span>`:(isDay(c)?"白天":"夜晚")}</span></button>`;
     li.firstElementChild.onclick=()=>select(c.id,true);
     frag.appendChild(li);
   });
