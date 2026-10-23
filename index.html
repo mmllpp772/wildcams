@@ -114,6 +114,33 @@ footer p{margin:0 0 8px}
 .playbtn.over{position:relative;z-index:1}
 .playbtn small{font-weight:400;font-size:13px;opacity:.8}
 .localnote{margin:0 0 14px;padding:10px 14px;border-radius:10px;background:color-mix(in srgb,var(--star) 14%,var(--panel));border:1px solid color-mix(in srgb,var(--star) 40%,transparent);font-size:14px;max-width:none}
+
+.scanbtn{border-color:var(--accent);color:var(--accent)}
+.toolbar .chips{flex:1 1 auto}
+.perr{position:absolute;inset:0;z-index:2;background:rgba(8,14,16,.92);color:#e9efec;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:20px;text-align:center}
+.perr b{font-size:18px}
+.perr span{font-size:14px;opacity:.8}
+.pbtns{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.go.ghost.dark{color:#9fe3da;border-color:#9fe3da;background:none;cursor:pointer;font:inherit;font-size:14px}
+.cam.off .t,.cam.off .w{opacity:.5}
+.st.ok{color:var(--accent);font-family:var(--f-body)}
+.st.bad{color:#c2410c;font-family:var(--f-body)}
+.dot.off circle.core{fill:var(--panel);stroke:var(--muted);stroke-width:1.5px}
+.dot.off circle.halo{display:none}
+.scan{position:fixed;z-index:20;right:calc(16px + env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));width:min(360px,calc(100vw - 32px));background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px 14px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+.shead{display:flex;justify-content:space-between;align-items:center}
+.x{font:inherit;font-size:20px;line-height:1;background:none;border:0;color:var(--muted);cursor:pointer;padding:2px 6px}
+.sbar{height:6px;border-radius:3px;background:var(--line);overflow:hidden;margin:10px 0 6px}
+.sbar i{display:block;height:100%;width:0;background:var(--accent);transition:width .3s}
+.snum{margin:0 0 8px;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.snum b{color:var(--ink)} .snum .okc{color:var(--accent)} .snum .badc{color:#c2410c}
+.slots{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.slot{position:relative;aspect-ratio:16/9;background:#0b1214;border-radius:6px;overflow:hidden}
+.slot iframe{position:absolute;inset:0;width:100%;height:100%;border:0;pointer-events:none}
+.slot span{position:absolute;left:0;right:0;bottom:0;font-size:10px;color:#fff;background:rgba(0,0,0,.6);padding:1px 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.smsg{font-size:12px;color:var(--muted);margin:8px 0}
+#scanOut{width:100%;height:80px;font:12px var(--f-mono);margin-bottom:8px}
+.sbtns{display:flex;gap:8px;flex-wrap:wrap}
 footer{margin-top:22px;font-size:13px;color:var(--muted);max-width:80ch}
 footer a{color:var(--accent)}
 </style>
@@ -127,8 +154,17 @@ footer a{color:var(--accent)}
     <div class="utc">台北時間 <b id="tpe">--:--</b><br>UTC <span id="utc">--:--</span></div>
   </header>
 
-  <div class="toolbar"><div class="chips" id="chips" role="group" aria-label="篩選直播"></div><label class="search"><span class="sr">搜尋直播</span><input id="q" type="search" placeholder="搜尋：熊貓、老鷹、Kenya…" autocomplete="off"></label></div>
+  <div class="toolbar"><div class="chips" id="chips" role="group" aria-label="篩選直播"></div><button class="chip scanbtn" id="scanBtn">檢查哪些在播</button><label class="search"><span class="sr">搜尋直播</span><input id="q" type="search" placeholder="搜尋：熊貓、老鷹、Kenya…" autocomplete="off"></label></div>
 
+  <div class="scan" id="scan" hidden role="dialog" aria-label="檢查直播">
+    <div class="shead"><b>檢查直播</b><button class="x" id="scanClose" aria-label="關閉">×</button></div>
+    <div class="sbar"><i id="scanBar"></i></div>
+    <p class="snum" id="scanNum"></p>
+    <div class="slots"><div class="slot"></div><div class="slot"></div><div class="slot"></div></div>
+    <p class="smsg" id="scanMsg"></p>
+    <textarea id="scanOut" hidden readonly aria-label="失效清單"></textarea>
+    <div class="sbtns"><button class="toggle" id="scanStop">暫停</button><button class="toggle" id="scanCopy">複製失效清單</button></div>
+  </div>
   <p class="localnote" id="localnote" hidden>你是直接從電腦打開這個檔案，YouTube 不允許這樣嵌入播放，所以影片會在小視窗開啟。想在頁面裡直接播，請改用一起附上的啟動檔（start-wildcams）打開。</p>
   <div class="grid">
     <section>
@@ -383,8 +419,34 @@ const CAMS = CAMS_RAW.map((r,i)=>{
   if(yt && yt.startsWith("ch:")){const ch=yt.slice(3); embed=`https://www.youtube.com/embed/live_stream?channel=${ch}&autoplay=1&mute=1`; watch=`https://www.youtube.com/channel/${ch}/live`;}
   else if(yt){embed=`https://www.youtube.com/embed/${yt}?autoplay=1&mute=1&rel=0`; watch=`https://www.youtube.com/watch?v=${yt}`;}
   const vid=(yt&&!yt.startsWith("ch:"))?yt:null;
-  return {id:"c"+i,title,place,lat,lon,tz,cat:cat.split(","),embed,watch,vid,names,note,star:!!names};
+  return {id:"c"+i,key:yt||url,title,place,lat,lon,tz,cat:cat.split(","),embed,watch,vid,names,note,star:!!names};
 });
+
+/* ---------- live status (checked in this browser) ---------- */
+const ST_KEY="wildcams-status-v1", ST_TTL=12*3600e3;
+let STATUS={}; try{STATUS=JSON.parse(localStorage.getItem(ST_KEY)||"{}")||{}}catch(e){STATUS={}}
+function saveStatus(){try{localStorage.setItem(ST_KEY,JSON.stringify(STATUS))}catch(e){}}
+function setStatus(c,s){STATUS[c.key]={s,t:Date.now()};saveStatus();}
+function statusOf(c){const r=STATUS[c.key]; if(!r||Date.now()-r.t>ST_TTL)return null; return r.s;}
+const isOff=c=>{const s=statusOf(c);return s==="dead"||s==="stalled"};
+
+let ytReady=false; const ytQ=[];
+if(!LOCAL){
+  window.onYouTubeIframeAPIReady=()=>{ytReady=true; ytQ.splice(0).forEach(f=>f());};
+  const s=document.createElement("script"); s.src="https://www.youtube.com/iframe_api"; document.head.appendChild(s);
+}
+function whenYT(f){ytReady?f():ytQ.push(f)}
+function apiSrc(c){return c.embed+"&enablejsapi=1&origin="+encodeURIComponent(location.origin)}
+/* watch an iframe: "ok" once it plays, "dead" on a player error, "stalled" if nothing plays in time */
+function probe(iframe,onResult,ms){
+  let done=false;
+  const finish=s=>{if(done)return; done=true; clearTimeout(timer); onResult(s);};
+  const timer=setTimeout(()=>finish("stalled"),ms);
+  whenYT(()=>{ if(done)return; try{ new YT.Player(iframe,{events:{
+    onStateChange:e=>{ if(e.data===1) finish("ok"); },
+    onError:()=>finish("dead") }}); }catch(err){} });
+  return ()=>{done=true; clearTimeout(timer);};
+}
 
 const FILTERS=[
   {k:"all",label:"全部",fn:()=>true},
@@ -394,6 +456,7 @@ const FILTERS=[
   {k:"ocean",label:"海洋",fn:c=>c.cat.includes("ocean")},
   {k:"zoo",label:"動物園・保育中心",fn:c=>c.cat.includes("zoo")},
   {k:"pet",label:"貓咪・救援",fn:c=>c.cat.includes("pet")},
+  {k:"live",label:"確認在播",fn:c=>statusOf(c)==="ok"},
 ];
 let filter="all", query="", selected=CAMS[21].id, dayFirst=true;
 
@@ -453,7 +516,7 @@ const chips=document.getElementById("chips");
 FILTERS.forEach(f=>{
   const b=document.createElement("button");
   b.className="chip"; b.id="f-"+f.k;
-  b.innerHTML=`${f.label}<span class="n">${CAMS.filter(f.fn).length}</span>`;
+  b.innerHTML=`${f.label}<span class="n"></span>`;
   b.onclick=()=>{filter=f.k;render()};
   chips.appendChild(b);
 });
@@ -472,6 +535,7 @@ function select(id,play){selected=id;render();renderDetail(play);
   if(play && window.matchMedia("(max-width:860px)").matches) document.getElementById("detail").scrollIntoView({behavior:"smooth",block:"start"});
 }
 
+let mainStop=null;
 function renderDetail(play){
   const c=CAMS.find(x=>x.id===selected); if(!c)return;
   const day=isDay(c);
@@ -481,7 +545,7 @@ function renderDetail(play){
     const thumb=c.vid?`<img class="thumb" src="https://i.ytimg.com/vi/${c.vid}/hqdefault.jpg" alt="" onerror="this.remove()">`:"";
     player=`${thumb}<button class="playbtn over" id="popNow"><span class="tri"></span>播放 ${esc(c.title)}<small>會在小視窗開啟</small></button>`;
   }else if(c.embed && play){
-    player=`<iframe src="${esc(c.embed)}" title="${esc(c.title)}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>`;
+    player=`<iframe id="ytmain" src="${esc(apiSrc(c))}" title="${esc(c.title)}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe><div class="perr" id="perr" hidden></div>`;
   }else if(c.embed){
     player=`<button class="playbtn" id="playNow"><span class="tri"></span>播放 ${esc(c.title)}</button>`;
   }else{
@@ -500,6 +564,21 @@ function renderDetail(play){
       <a class="go ghost" href="${esc(c.watch)}" target="_blank" rel="noopener">${c.embed?"播不出來？到 YouTube 看 ↗":"開啟直播 ↗"}</a>
     </div>`;
   const pb=document.getElementById("playNow"); if(pb) pb.onclick=()=>renderDetail(true);
+  if(mainStop){mainStop(); mainStop=null;}
+  const fr=document.getElementById("ytmain");
+  if(fr) mainStop=probe(fr,s=>{
+    if(s==="stalled") return;            /* could just be slow or paused; leave it */
+    setStatus(c,s); render();
+    if(s==="dead"){
+      const next=CAMS.find(x=>x.embed&&statusOf(x)==="ok"&&x.id!==c.id);
+      const pe=document.getElementById("perr"); if(!pe)return;
+      pe.innerHTML=`<b>這場直播已經結束或被關閉了</b><span>頻道多半換了新的直播網址。</span>
+        <div class="pbtns"><a class="go" href="${esc(c.watch)}" target="_blank" rel="noopener">到 YouTube 找新的直播 ↗</a>
+        ${next?`<button class="go ghost dark" id="goNext">改看「${esc(next.title)}」</button>`:""}</div>`;
+      pe.hidden=false;
+      const gn=document.getElementById("goNext"); if(gn) gn.onclick=()=>select(next.id,true);
+    }
+  },30000);
   const pp=document.getElementById("popNow");
   if(pp) pp.onclick=()=>{
     const w=Math.min(1120,screen.availWidth-40), h=Math.round(w*9/16)+120;
@@ -510,7 +589,7 @@ function renderDetail(play){
 }
 
 function render(){
-  FILTERS.forEach(x=>document.getElementById("f-"+x.k).setAttribute("aria-pressed",x.k===filter));
+  FILTERS.forEach(x=>{const b=document.getElementById("f-"+x.k); b.setAttribute("aria-pressed",x.k===filter); b.querySelector(".n").textContent=CAMS.filter(x.fn).length;});
   let items=CAMS.filter(matches);
   if(dayFirst) items=[...items].sort((a,b)=>isDay(b)-isDay(a));
   document.getElementById("sortBtn").textContent=dayFirst?"白天優先":"依地區";
@@ -520,15 +599,62 @@ function render(){
   items.forEach(c=>{
     const li=document.createElement("li");
     const day=isDay(c);
-    li.innerHTML=`<button class="cam${c.star?" star":""}${c.id===selected?" sel":""}">
+    const st=statusOf(c);
+    li.innerHTML=`<button class="cam${c.star?" star":""}${c.id===selected?" sel":""}${isOff(c)?" off":""}">
       <span class="sw"></span>
       <span><span class="t">${esc(c.title)}${c.embed?"":' <span class="ext">外連</span>'}</span><br><span class="w">${esc(c.place)}</span></span>
-      <span class="tm">${localTime(c.tz)}<br>${day?"白天":"夜晚"}</span></button>`;
+      <span class="tm">${localTime(c.tz)}<br>${st==="ok"?'<span class="st ok">● 在播</span>':isOff(c)?'<span class="st bad">已失效</span>':(day?"白天":"夜晚")}</span></button>`;
     li.firstElementChild.onclick=()=>select(c.id,true);
     ul.appendChild(li);
   });
-  dots.classed("dim",d=>!matches(d)).classed("sel",d=>d.id===selected);
+  dots.classed("dim",d=>!matches(d)).classed("sel",d=>d.id===selected).classed("off",d=>isOff(d));
   dots.filter(d=>d.id===selected).raise();
+}
+
+/* ---------- scan every cam in this browser ---------- */
+const scanBtn=document.getElementById("scanBtn"), panel=document.getElementById("scan");
+let scan=null;
+if(LOCAL) scanBtn.hidden=true;
+scanBtn.onclick=()=>{ if(scan&&scan.running) {panel.hidden=false; return;} startScan(); };
+document.getElementById("scanClose").onclick=()=>{ stopScan(); panel.hidden=true; };
+document.getElementById("scanStop").onclick=()=>{ scan&&scan.running?stopScan():startScan(); };
+document.getElementById("scanCopy").onclick=async()=>{
+  const lines=CAMS.filter(isOff).map(c=>`${c.title} | ${c.key}`).join("\n")||"（沒有失效的直播）";
+  const msg=document.getElementById("scanMsg");
+  try{ await navigator.clipboard.writeText(lines); msg.textContent="已複製失效清單，可以貼給 Claude 換掉。"; }
+  catch(e){ const ta=document.getElementById("scanOut"); ta.hidden=false; ta.value=lines; ta.select(); msg.textContent="請按 Ctrl+C 複製下面的清單。"; }
+};
+function startScan(){
+  const queue=CAMS.filter(c=>c.embed);
+  scan={running:true,queue:[...queue],total:queue.length,done:0,stops:[]};
+  panel.hidden=false; document.getElementById("scanStop").textContent="暫停";
+  document.getElementById("scanMsg").textContent="每個直播試播最多 20 秒，請讓這個分頁保持開著。";
+  for(let i=0;i<3;i++) runSlot(i);
+  updScan();
+}
+function stopScan(){
+  if(!scan)return; scan.running=false; scan.stops.forEach(f=>f()); scan.stops=[];
+  document.querySelectorAll(".slot").forEach(s=>s.innerHTML="");
+  document.getElementById("scanStop").textContent="重新檢查"; updScan();
+}
+function runSlot(i){
+  const slot=document.querySelectorAll(".slot")[i];
+  if(!scan.running) return;
+  const c=scan.queue.shift();
+  if(!c){ slot.innerHTML=""; if(!document.querySelector(".slot iframe")){scan.running=false; document.getElementById("scanStop").textContent="重新檢查"; document.getElementById("scanMsg").textContent="檢查完成。結果會保留 12 小時，可用「確認在播」篩選。"; updScan();} return; }
+  slot.innerHTML=`<iframe src="${esc(apiSrc(c))}" allow="autoplay; encrypted-media" referrerpolicy="strict-origin-when-cross-origin" title="檢查 ${esc(c.title)}"></iframe><span>${esc(c.title)}</span>`;
+  const stop=probe(slot.querySelector("iframe"),s=>{
+    setStatus(c,s); scan.done++; slot.innerHTML=""; updScan(); render();
+    setTimeout(()=>runSlot(i),300);
+  },20000);
+  scan.stops.push(stop);
+}
+function updScan(){
+  const emb=CAMS.filter(c=>c.embed);
+  const ok=emb.filter(c=>statusOf(c)==="ok").length, off=emb.filter(isOff).length;
+  const total=scan?scan.total:emb.length, done=scan?scan.done:ok+off;
+  document.getElementById("scanBar").style.width=(100*done/total)+"%";
+  document.getElementById("scanNum").innerHTML=`已檢查 <b>${done}</b> / ${total}　在播 <b class="okc">${ok}</b>　失效 <b class="badc">${off}</b>`;
 }
 
 function tick(){
@@ -539,7 +665,7 @@ function tick(){
   if(c&&dt) dt.textContent=localTime(c.tz);
 }
 if(LOCAL) document.getElementById("localnote").hidden=false;
-tick(); render(); renderDetail(false);
+tick(); render(); renderDetail(false); updScan();
 setInterval(()=>{tick();drawNight();render()},60000);
 </script>
 
