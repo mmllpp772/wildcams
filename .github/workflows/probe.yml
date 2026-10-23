@@ -13,8 +13,8 @@ jobs:
         run: |
           mkdir out
           probe(){ n=$1; u=$2; echo "== $n $u" >> out/report.txt
-            curl -sS -m 25 -L -H "Origin: https://mmllpp772.github.io" -H "Accept-Encoding: gzip" --compressed -D out/h_$n.txt -o out/b_$n.txt "$u" -w "code=%{http_code} size=%{size_download}\n" >> out/report.txt 2>&1
-            grep -i -E "^(access-control-allow-origin|content-type|x-ratelimit)" out/h_$n.txt >> out/report.txt
+            curl -sS -m 25 -L -H "Origin: https://mmllpp772.github.io" -H "Accept-Encoding: gzip" --compressed -D out/h_$n.txt -o out/b_$n.txt "$u" -w "code=%{http_code} size=%{size_download}\n" >> out/report.txt 2>&1 || echo "curl failed $?" >> out/report.txt
+            grep -i -E "^(access-control-allow-origin|content-type|x-ratelimit)" out/h_$n.txt >> out/report.txt || true
             head -c 3000 out/b_$n.txt >> out/report.txt; echo >> out/report.txt; echo >> out/report.txt; }
           probe gdacs_full "https://www.gdacs.org/gdacsapi/api/events/geteventlist/SEARCH?eventlist=TC&fromDate=2026-10-13&toDate=2026-10-24"
           probe gdacs_geom "https://www.gdacs.org/gdacsapi/api/polygons/getgeometry?eventtype=TC&eventid=1001338&episodeid=35"
