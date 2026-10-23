@@ -1,0 +1,24 @@
+HTTP/2 200 
+content-type: application/json
+server: AmazonS3
+last-modified: Fri, 23 Oct 2026 14:41:14 GMT
+x-amz-expiration: expiry-date="Wed, 28 Oct 2026 00:00:00 GMT", rule-id="PublicBucketLifecycleRule50"
+content-encoding: gzip
+x-amz-server-side-encryption: AES256
+date: Fri, 23 Oct 2026 15:25:22 GMT
+cache-control: max-age=60
+etag: W/"ec1c61b570c8df8e4bfb23504d5b6799"
+vary: Accept-Encoding
+via: 1.1 79348c87dcb9ae2011317bb021c4e29e.cloudfront.net (CloudFront)
+age: 15
+x-xss-protection: 1; mode=block
+referrer-policy: strict-origin-when-cross-origin
+content-security-policy: script-src 'self' 'unsafe-inline' 'unsafe-eval' www.jma.go.jp www.jma-net.go.jp js.jma.go.jp www.data.jma.go.jp ds.data.jma.go.jp www.google.com www.gstatic.com jma.genieesspv.jp pagead2.googlesyndication.com code.jquery.com ajaxzip3.github.io cdn.jsdelivr.net ajax.aspnetcdn.com code.createjs.com unpkg.com cdnjs.cloudflare.com ajax.googleapis.com platform.twitter.com github.githubassets.com maps.gsi.go.jp img.gsspat.jp; frame-ancestors 'self' www.mlit.go.jp www.data.jma.go.jp ds.data.jma.go.jp www.jma-net.go.jp www.pref.tokushima.lg.jp www.cgr.mlit.go.jp river-bosai.ktr.mlit.go.jp mie-mizubosai.go.jp sim.mie-mizubosai.go.jp mobile.mie-mizubosai.go.jp yoshino-drs.skr.mlit.go.jp view.mie-mizubosai.cbr.mlit.go.jp sim.mie-mizubosai.cbr.mlit.go.jp mobile.mie-mizubosai.cbr.mlit.go.jp
+x-content-type-options: nosniff
+strict-transport-security: max-age=31536000; preload
+access-control-allow-origin: *
+access-control-allow-headers: X-Requested-With
+x-cache: Hit from cloudfront
+x-amz-cf-pop: PHX50-P2
+x-amz-cf-id: WHqnPEHkdITyyQAN3wMan1za32DuAWKw-M64Ugu2lX__4ZEOLyiWpw==
+

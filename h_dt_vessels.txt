@@ -1,0 +1,20 @@
+HTTP/2 200 
+content-type: application/json;charset=UTF-8
+date: Fri, 23 Oct 2026 15:24:53 GMT
+access-control-expose-headers: DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Content-Range,Range,Digitraffic-User
+content-encoding: gzip
+server: openresty
+cache-control: max-age=60
+last-modified: Fri, 23 Oct 2026 15:24:53 GMT
+etag: W/"0a79cd04ea607aa2699821e7ab095ab7e"
+expires: Fri, 23 Oct 2026 15:25:53 GMT
+access-control-allow-origin: *
+access-control-allow-methods: GET, POST, OPTIONS
+access-control-allow-headers: DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Content-Range,Range,Digitraffic-User
+via: 1.1 d9fec1199130a00161e2120cb7f67a8e.cloudfront.net (CloudFront)
+alt-svc: h3=":443"; ma=86400
+age: 30
+x-cache: Hit from cloudfront
+x-amz-cf-pop: PHX50-P2
+x-amz-cf-id: tpE88QJ-X90IMSVAoyx_Wd6sm0c4dBR-4ljsd-OJiGmpBArA5cTNrw==
+

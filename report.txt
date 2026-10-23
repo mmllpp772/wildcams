@@ -1,0 +1,216 @@
+== gdacs_full https://www.gdacs.org/gdacsapi/api/events/geteventlist/SEARCH?eventlist=TC&fromDate=2026-10-13&toDate=2026-10-24
+code=200 size=3002
+Content-Type: application/json; charset=utf-8
+Access-Control-Allow-Origin: *
+{"type":"FeatureCollection","features":[{"type":"Feature","bbox":[123.8,22.7,123.8,22.7],"geometry":{"type":"Point","coordinates":[123.8,22.7]},"properties":{"eventtype":"TC","eventid":1001338,"episodeid":35,"eventname":"CHAMPI-26","glide":"TC-2026-000192-GUM","name":"Tropical Cyclone CHAMPI-26","description":"Tropical Cyclone CHAMPI-26","htmldescription":"Red Tropical Cyclone CHAMPI-26 in Philippines, Guam, Northern Mariana Islands, Japan from: 14 Oct 2026  to: 23 Oct 2026 .","icon":"https://www.gdacs.org/images/gdacs_icons/maps/Green/TC.png","iconoverall":"https://www.gdacs.org/images/gdacs_icons/maps/Red/TC.png","url":{"geometry":"https://www.gdacs.org/gdacsapi/api/polygons/getgeometry?eventtype=TC&eventid=1001338&episodeid=35","report":"https://www.gdacs.org/report.aspx?eventid=1001338&episodeid=35&eventtype=TC","details":"https://www.gdacs.org/gdacsapi/api/events/geteventdata?eventtype=TC&eventid=1001338"},"alertlevel":"Red","alertscore":3,"episodealertlevel":"Green","episodealertscore":1.0,"istemporary":"false","iscurrent":"true","country":"Philippines, Guam, Northern Mariana Islands, Japan","fromdate":"2026-10-14T12:00:00","todate":"2026-10-23T00:00:00","datemodified":"2026-10-23T03:00:34","iso3":"GUM","source":"JTWC","sourceid":"","polygonlabel":"Centroid","Class":"Point_Centroid","countryonland":"","affectedcountries":[{"iso2":"PH","iso3":"PHL","countryname":"Philippines"},{"iso2":"GU","iso3":"GUM","countryname":"Guam"},{"iso2":"JP","iso3":"JPN","countryname":"Japan"}],"severitydata":{"severity":296.2944,"severitytext":"Hurricane/Typhoon > 74 mph (maximum wind speed of 296 km/h)","severityunit":"km/h"}}},{"type":"Feature","bbox":[-110.3,21.5,-110.3,21.5],"geometry":{"type":"Point","coordinates":[-110.3,21.5]},"properties":{"eventtype":"TC","eventid":1001335,"episodeid":38,"eventname":"SIMON-26","glide":"","name":"Tropical Cyclone SIMON-26","description":"Tropical Cyclone SIMON-26","htmldescription":"Orange Tropical Cyclone SIMON-26 in México from: 07 Oct 2026  to: 16 Oct 2026 .","icon":"https://www.gdacs.org/images/gdacs_icons/maps/Green/TC.png","iconoverall":"https://www.gdacs.org/images/gdacs_icons/maps/Orange/TC.png","url":{"geometry":"https://www.gdacs.org/gdacsapi/api/polygons/getgeometry?eventtype=TC&eventid=1001335&episodeid=38","report":"https://www.gdacs.org/report.aspx?eventid=1001335&episodeid=38&eventtype=TC","details":"https://www.gdacs.org/gdacsapi/api/events/geteventdata?eventtype=TC&eventid=1001335"},"alertlevel":"Orange","alertscore":2,"episodealertlevel":"Green","episodealertscore":1.0,"istemporary":"false","iscurrent":"false","country":"México","fromdate":"2026-10-07T15:00:00","todate":"2026-10-16T21:00:00","datemodified":"2026-10-17T17:37:52","iso3":"MEX","source":"NOAA","sourceid":"","polygonlabel":"Centroid","Class":"Point_Centroid","countryonland":"","affectedcountries":[],"severitydata":{"severity":249.9984,"severitytext":"Tropical Depression (maximum wind speed of 250 km/h)","severityunit":"km/h"}}}],"bbox":nul
+
+== gdacs_geom https://www.gdacs.org/gdacsapi/api/polygons/getgeometry?eventtype=TC&eventid=1001338&episodeid=35
+curl: (28) Operation timed out after 25001 milliseconds with 0 bytes received
+code=000 size=0
+curl failed 28
+
+
+== gdacs_ev https://www.gdacs.org/gdacsapi/api/events/geteventdata?eventtype=TC&eventid=1001338
+curl: (28) Operation timed out after 25000 milliseconds with 0 bytes received
+code=000 size=0
+curl failed 28
+
+
+== jma_spec https://www.jma.go.jp/bosai/typhoon/data/TC2636/specifications.json
+code=200 size=1381
+content-type: application/json
+access-control-allow-origin: *
+[{"part":"title","issue":{"JST":"2026-10-23T23:45:00+09:00","UTC":"2026-10-23T14:45:00Z"},"typhoonNumber":"2630","name":{"jp":"チャンパー","en":"Champi"},"category":{"jp":"台風","en":"TY"}},{"part":{"jp":"実況","en":"Analysis"},"maximumWind":{"sustained":{"m/s":"45","kt":"85","note":"中心付近"},"gust":{"m/s":"60","kt":"120"}},"galeWarning":[{"area":"北東","range":{"km":850,"nm":450}},{"area":"南西","range":{"km":600,"nm":325}}],"stormWarning":[{"area":"北東","range":{"km":330,"nm":180}},{"area":"南西","range":{"km":220,"nm":120}}],"advancedHours":0,"category":{"jp":"台風","en":"TY"},"scale":"大型","intensity":"非常に強い","position":{"deg":[25.0,122.5],"dm":[[25,0],[122,30]],"accuracy":"正確"},"location":"与那国島の北西約80km","course":"北北西","speed":{"km/h":"20","kt":"10"},"pressure":"945","validtime":{"JST":"2026-10-23T23:00:00+09:00","UTC":"2026-10-23T14:00:00Z"}},{"part":{"jp":"推定　１時間後","en":"Estimate for 1 hour ahead"},"maximumWind":{"sustained":{"m/s":"45","kt":"85","note":"中心付近"},"gust":{"m/s":"60","kt":"120"}},"galeWarning":[{"area":"北東","range":{"km":850,"nm":450}},{"area":"南西","range":{"km":600,"nm":325}}],"stormWarning":[{"area":"北東","range":{"km":330,"nm":180}},{"area":"南西","range":{"km":220,"nm":120}}],"advancedHours":1,"category":{"jp":"台風","en":"TY"},"scale":"大型","intensity":"非常に強い","position":{"deg":[25.1,122.4],"dm":[[25,5],[122,25]]},"location":"与那国島の北西約90km","course":"北北西","speed":{"km/h":"20","kt":"10"},"pressure":"945","validtime":{"JST":"2026-10-24T00:00:00+09:00","UTC":"2026-10-23T15:00:00Z"}},{"part":{"jp":"予報　４時間後","en":"Forecast for 4 hours ahead"},"maximumWind":{"sustained":{"m/s":"45","kt":"85","note":"中心付近"},"gust":{"m/s":"60","kt":"120"}},"stormWarning":[{"area":"北東","range":{"km":330,"nm":180}},{"area":"南西","range":{"km":280,"nm":150}}],"advancedHours":4,"category":{"jp":"台風","en":"TY"},"intensity":"非常に強い","position":{"deg":[25.2,122.9],"dm":[[25,10],[122,55]]},"probabilityCircleRadius":{"km":50,"nm":28},"course":"北","speed":{"km/h":"15","kt":"8"},"pressure":"950","validtime":{"JST":"2026-10-24T03:00:00+09:00","UTC":"2026-10-23T18:00:00Z"}},{"part":{"jp":"予報　７時間後","en":"Forecast for 7 hours ahead"},"maximumWind":{"sustained":{"m/s":"40","kt":"80","note":"中心付近"},"gust":{"m/s":"60","kt":"115"}},"stormWarning":[{"area":"北東","range":{"km":310,"nm":170}},{"area":"南西","range":{"km":280,"nm":150}}],"advancedHours":7,"category":{"jp":"台風","en":"TY"},"intensity":"強い","position":{"deg":[25.3,122.9],"dm":[[25,20],[122,55]]},"probabilityCircleRadius":{"km":55,"nm":31},"course":"北","speed":{"note":{"jp":"ゆっくり","en":"Slow"}},"pressure":"950","validtime":{"JST":"2026-10-24T06:00:00+09:00","UTC":"2026-10-23T21:00:00Z"}},{"part":{"jp":"予報　１０時間後","en":"Forecast for 10 hours ahead"},"maximumWind":{"sustain
+
+== jma_fc https://www.jma.go.jp/bosai/typhoon/data/TC2636/forecast.json
+code=200 size=1622
+content-type: application/json
+access-control-allow-origin: *
+[{"part":"title","issue":{"JST":"2026-10-23T23:45:00+09:00","UTC":"2026-10-23T14:45:00Z"},"typhoonNumber":"2630","name":{"jp":"チャンパー","en":"Champi"}},{"part":{"jp":"実況","en":"Analysis"},"advancedHours":0,"validtime":{"JST":"2026-10-23T23:00:00+09:00","UTC":"2026-10-23T14:00:00Z"},"track":{"preTyphoon":[[9.5,160.0],[9.0,160.5],[8.7,161.1],[9.2,161.3],[9.5,161.3],[10.0,160.8],[10.4,160.5],[10.8,160.0],[10.8,159.4],[10.9,158.9],[11.1,158.4]],"typhoon":[[11.1,158.4],[11.3,157.9],[11.3,157.1],[11.3,156.5],[11.3,156.1],[11.4,155.7],[11.1,154.1],[10.6,153.3],[11.2,152.5],[11.1,152.1],[11.4,151.5],[11.4,151.0],[11.9,150.2],[12.2,149.6],[12.4,148.6],[12.5,147.9],[12.5,147.3],[12.6,146.9],[12.7,146.2],[12.9,145.7],[13.1,144.9],[13.0,144.1],[13.1,143.5],[13.1,142.8],[13.1,142.4],[13.1,141.9],[13.4,141.5],[13.6,140.8],[13.7,140.4],[13.9,140.0],[14.0,139.3],[14.2,138.8],[14.3,138.5],[14.6,138.1],[14.8,137.7],[15.1,137.2],[15.4,136.7],[15.7,136.2],[16.0,135.6],[16.2,134.9],[16.4,134.5],[16.7,133.8],[17.0,133.0],[17.2,132.2],[17.4,131.4],[17.6,130.9],[18.1,130.2],[18.4,129.5],[18.7,128.9],[18.9,128.4],[19.3,128.0],[19.5,127.4],[19.9,127.0],[20.2,126.5],[20.3,126.0],[20.6,125.7],[20.8,125.4],[21.0,125.1],[21.2,124.9],[21.3,124.8],[21.4,124.7],[21.5,124.6],[21.6,124.5],[21.7,124.4],[21.9,124.3],[22.0,124.2],[22.1,124.1],[22.2,124.0],[22.3,124.0],[22.4,123.9],[22.6,123.8],[22.8,123.8],[23.0,123.7],[23.2,123.6],[23.4,123.5],[23.6,123.4],[23.8,123.3],[23.9,123.2],[24.2,123.1],[24.2,123.0],[24.4,123.2],[24.8,123.1],[24.9,122.8],[25.0,122.6],[25.0,122.5]]},"center":[25.0,122.5],"galeWarningArea":{"center":[25.73,123.31],"radius":717650},"stormWarningArea":{"arc":[[[25.35,122.89],277800,[0.0,360.0]]]}},{"part":{"jp":"推定　１時間後","en":"Estimate for 1 hour ahead"},"advancedHours":1,"validtime":{"JST":"2026-10-24T00:00:00+09:00","UTC":"2026-10-23T15:00:00Z"},"center":[25.1,122.4],"galeWarningArea":{"center":[25.83,123.21],"radius":717650},"stormWarningArea":{"arc":[[[25.45,122.79],277800,[0.0,360.0]]]}},{"part":{"jp":"予報　４時間後","en":"Forecast for 4 hours ahead"},"advancedHours":4,"validtime":{"JST":"2026-10-24T03:00:00+09:00","UTC":"2026-10-23T18:00:00Z"},"probabilityCircle":{"radius":51856},"center":[25.2,122.9],"stormWarningArea":{"arc":[[[25.38,123.1],305580,[0.0,360.0]]]}},{"part":{"jp":"予報　７時間後","en":"Forecast for 7 hours ahead"},"advancedHours":7,"validtime":{"JST":"2026-10-24T06:00:00+09:00","UTC":"2026-10-23T21:00:00Z"},"probabilityCircle":{"radius":57412,"tangent_3h":[[[25.04,122.41],[24.97,122.45]],[[24.97,123.35],[25.04,123.39]]]},"center":[25.3,122.9],"stormWarningArea":{"arc":[[[25.38,123.1],305580,[0.0,360.0]]]}},{"part":{"jp":"予報　１０時間後","en":"Forecast for 10 hours ahead"},"advancedHours":10,"validtime":{"JST":"2026-10-24T09:00:00+09:00","UTC":"2026-10-24T00:00:00Z"},"probabilityCircle":{"radius":64820,"tangent_3h":[[[25.52,122.37],[25.41,122.34]],[[24.81,123.08],[24.85,123.2]]],"tangent":[[
+
+== dt_vessels https://meri.digitraffic.fi/api/ais/v1/vessels
+code=200 size=47083
+content-type: application/json;charset=UTF-8
+access-control-allow-origin: *
+[ {
+  "callSign" : "SBFW",
+  "destination" : "",
+  "draught" : 30,
+  "eta" : 1596,
+  "imo" : 9284312,
+  "mmsi" : 265538450,
+  "name" : "SODERARM",
+  "posType" : 1,
+  "referencePointA" : 15,
+  "referencePointB" : 25,
+  "referencePointC" : 5,
+  "referencePointD" : 5,
+  "shipType" : 60,
+  "timestamp" : 1792682697655
+}, {
+  "callSign" : "SFDU",
+  "destination" : "LJU-OST",
+  "draught" : 35,
+  "eta" : 419157,
+  "imo" : 0,
+  "mmsi" : 265536500,
+  "name" : "PLUTO",
+  "posType" : 1,
+  "referencePointA" : 43,
+  "referencePointB" : 43,
+  "referencePointC" : 7,
+  "referencePointD" : 7,
+  "shipType" : 60,
+  "timestamp" : 1792682753657
+}, {
+  "callSign" : "7SA2900",
+  "destination" : "RESCUE VESSEL SWEDEN",
+  "draught" : 0,
+  "eta" : 1596,
+  "imo" : 0,
+  "mmsi" : 265832550,
+  "name" : "RESCUE S-BANKEN NORD",
+  "posType" : 15,
+  "referencePointA" : 7,
+  "referencePointB" : 1,
+  "referencePointC" : 1,
+  "referencePointD" : 1,
+  "shipType" : 51,
+  "timestamp" : 1792682774179
+}, {
+  "callSign" : "SJAL",
+  "destination" : "",
+  "draught" : 0,
+  "eta" : 1596,
+  "imo" : 0,
+  "mmsi" : 265602050,
+  "name" : "OLLIVER ",
+  "posType" : 15,
+  "referencePointA" : 18,
+  "referencePointB" : 10,
+  "referencePointC" : 4,
+  "referencePointD" : 4,
+  "shipType" : 70,
+  "timestamp" : 1792682826068
+}, {
+  "callSign" : "CQEP",
+  "destination" : "SE SSR",
+  "draught" : 43,
+  "eta" : 701568,
+  "imo" : 9005376,
+  "mmsi" : 255805693,
+  "name" : "ADRIATA",
+  "posType" : 1,
+  "referencePointA" : 89,
+  "referencePointB" : 15,
+  "referencePointC" : 9,
+  "referencePointD" : 7,
+  "shipType" : 70,
+  "timestamp" : 1792682939668
+}, {
+  "callSign" : "9LU2038",
+  "destination" : "USTLUGA",
+  "draught" : 80,
+  "eta" : 697728,
+  "imo" : 9330472,
+  "mmsi" : 667001235,
+  "name" : "THORIN",
+  "posType" : 1,
+  "referencePointA" : 0,
+  "referencePointB" : 0,
+  "referencePointC" : 0,
+  "referencePointD" : 0,
+  "shipType" : 80,
+  "timestamp" : 1792683064264
+}, {
+  "callSign" : "OWPV2",
+  "destination" : "SEGOT",
+  "draught" : 71,
+  "eta" : 704960,
+  "imo" : 9722390,
+  "mmsi" : 219775000,
+  "name" : "TERNSUND",
+  "posType" : 1,
+  "referencePointA" : 119,
+  "referencePointB" : 28,
+  "referencePointC" : 5,
+  "referencePointD" : 17,
+  "shipType" : 80,
+  "timestamp" : 1792683170254
+}, {
+  "callSign" : "PHPE",
+  "destination" : "SE KOG",
+  "draught" : 69,
+  "eta" : 700544,
+  "imo" : 9207039,
+  "mmsi" : 245286000,
+  "name" : "CORAL IVORY",
+  "posType" : 1,
+  "referencePointA" : 87,
+  "referencePointB" : 29,
+  "referencePointC" : 11,
+  "referencePointD" : 5,
+  "shipType" : 80,
+  "timestamp" : 1792683215714
+}, {
+  "callSign" : "V2HU3",
+  "destination" : "SE TUN",
+  "draught" : 42,
+  "eta" : 701760,
+  "imo" : 9566796,
+  "mmsi" : 305842000,
+  "name" : "ANNA",
+  "posType" : 1,
+  "referencePointA" : 111,
+  "referencePointB" : 15,
+  "referencePointC" : 7,
+  "referencePointD" : 8,
+  "shipType" : 70,
+  "timestamp" : 1792683369510
+}, {
+  "callSign" : "UBKW8",
+  "destination" : "RUULU",
+  "draught" : 27,
+  "eta" : 555776,
+ 
+
+== usgs_week https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.geojson
+code=200 size=33328
+content-type: application/json; charset=utf-8
+access-control-allow-origin: *
+{"type":"FeatureCollection","metadata":{"generated":1792769123000,"url":"https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.geojson","title":"USGS Magnitude 2.5+ Earthquakes, Past Week","status":200,"api":"2.8.2","count":359},"features":[{"type":"Feature","properties":{"mag":5.2,"place":"50 km WNW of Malfa, Italy","time":1792763736149,"updated":1792765364737,"tz":null,"url":"https://earthquake.usgs.gov/earthquakes/eventpage/us6000u4dc","detail":"https://earthquake.usgs.gov/earthquakes/feed/v1.0/detail/us6000u4dc.geojson","felt":1,"cdi":2.7,"mmi":null,"alert":null,"status":"reviewed","tsunami":0,"sig":416,"net":"us","code":"6000u4dc","ids":",us6000u4dc,","sources":",us,","types":",dyfi,origin,phase-data,","nst":102,"dmin":1.308,"rms":0.7,"gap":35,"magType":"mww","type":"earthquake","title":"M 5.2 - 50 km WNW of Malfa, Italy"},"geometry":{"type":"Point","coordinates":[14.315,38.7787,10]},"id":"us6000u4dc"},
+{"type":"Feature","properties":{"mag":4.5,"place":"207 km NE of Lospalos, Timor Leste","time":1792758264746,"updated":1792759759040,"tz":null,"url":"https://earthquake.usgs.gov/earthquakes/eventpage/us6000u4bw","detail":"https://earthquake.usgs.gov/earthquakes/feed/v1.0/detail/us6000u4bw.geojson","felt":null,"cdi":null,"mmi":null,"alert":null,"status":"reviewed","tsunami":0,"sig":312,"net":"us","code":"6000u4bw","ids":",us6000u4bw,","sources":",us,","types":",origin,phase-data,","nst":22,"dmin":6.064,"rms":0.73,"gap":130,"magType":"mb","type":"earthquake","title":"M 4.5 - 207 km NE of Lospalos, Timor Leste"},"geometry":{"type":"Point","coordinates":[128.4666,-7.3421,128.107]},"id":"us6000u4bw"},
+{"type":"Feature","properties":{"mag":4.5,"place":"193 km ENE of Levuka, Fiji","time":1792757987354,"updated":1792759330040,"tz":null,"url":"https://earthquake.usgs.gov/earthquakes/eventpage/us6000u4bv","detail":"https://earthquake.usgs.gov/earthquakes/feed/v1.0/detail/us6000u4bv.geojson","felt":null,"cdi":null,"mmi":null,"alert":null,"status":"reviewed","tsunami":0,"sig":312,"net":"us","code":"6000u4bv","ids":",us6000u4bv,","sources":",us,","types":",origin,phase-data,","nst":33,"dmin":2.041,"rms":0.83,"gap":139,"magType":"mb","type":"earthquake","title":"M 4.5 - 193 km ENE of Levuka, Fiji"},"geometry":{"type":"Point","coordinates":[-178.9021,-17.6833,571.735]},"id":"us6000u4bv"},
+{"type":"Feature","properties":{"mag":5.7,"place":"61 km WNW of Leni, Italy","time":1792750756729,"updated":1792767612770,"tz":null,"url":"https://earthquake.usgs.gov/earthquakes/eventpage/us6000u4bk","detail":"https://earthquake.usgs.gov/earthquakes/feed/v1.0/detail/us6000u4bk.geojson","felt":9,"cdi":4.6,"mmi":3.791,"alert":"green","status":"reviewed","tsunami":0,"sig":504,"net":"us","code":"6000u4bk","ids":",us6000u4bk,","sources":",us,","types":",dyfi,losspager,moment-tensor,origin,phase-data,shakemap,","nst":130,"dmin":1.259,"rms":0.74,"gap":29,"magType":"mww","type":"earthquake","title":"M 5.7 - 61 km WNW of Leni, Italy"},"geometry":{"type":"Point","coordi
+
+== raw https://raw.githubusercontent.com/mmllpp772/wildcams/main/README.md
+code=200 size=237
+content-type: text/plain; charset=utf-8
+access-control-allow-origin: *
+# 野生直播地圖
+
+全世界近 300 個動物直播的互動地圖，點地圖或清單就直接播放。
+
+線上看：https://mmllpp772.github.io/wildcams/
+
+想加新的直播，編輯 `index.html` 裡的 `CAMS_RAW` 清單即可。
+
+
+total 624
+drwxr-xr-x 2 runner runner   4096 Oct 23 15:25 .
+drwxr-xr-x 3 runner runner   4096 Oct 23 15:24 ..
+-rw-r--r-- 1 runner runner 306133 Oct 23 15:25 b_dt_vessels.txt
+-rw-r--r-- 1 runner runner   3002 Oct 23 15:24 b_gdacs_full.txt
+-rw-r--r-- 1 runner runner   6605 Oct 23 15:25 b_jma_fc.txt
+-rw-r--r-- 1 runner runner   6984 Oct 23 15:25 b_jma_spec.txt
+-rw-r--r-- 1 runner runner    236 Oct 23 15:25 b_raw.txt
+-rw-r--r-- 1 runner runner 253179 Oct 23 15:25 b_usgs_week.txt
+-rw-r--r-- 1 runner runner    959 Oct 23 15:25 h_dt_vessels.txt
+-rw-r--r-- 1 runner runner      0 Oct 23 15:24 h_gdacs_ev.txt
+-rw-r--r-- 1 runner runner   1200 Oct 23 15:24 h_gdacs_full.txt
+-rw-r--r-- 1 runner runner      0 Oct 23 15:24 h_gdacs_geom.txt
+-rw-r--r-- 1 runner runner   1676 Oct 23 15:25 h_jma_fc.txt
+-rw-r--r-- 1 runner runner   1676 Oct 23 15:25 h_jma_spec.txt
+-rw-r--r-- 1 runner runner    921 Oct 23 15:25 h_raw.txt
+-rw-r--r-- 1 runner runner    787 Oct 23 15:25 h_usgs_week.txt
+-rw-r--r-- 1 runner runner  16733 Oct 23 15:25 report.txt

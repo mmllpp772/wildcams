@@ -1,0 +1,13 @@
+HTTP/1.1 200 OK
+Content-Length: 3002
+Content-Type: application/json; charset=utf-8
+Access-Control-Allow-Origin: *
+X-Content-Type-Options: nosniff
+Content-Security-Policy: script-src 'self' 'unsafe-inline' 'unsafe-eval' https://gdacs.azurewebsites.net/ *.gdacs.org https://www.gdacs.org https://gdacs.org  https://www.gdacs.org/contentdata  https://gdacs.org/contentdata https://edo.jrc.ec.europa.eu *.jrc.ec.europa.eu *.unpkg.com https://unpkg.com *.geoserver.gfm.eodc.eu https://geoserver.gfm.eodc.eu.com https://cdn.jsdelivr.net *.cdn.jsdelivr.net *.europa.eu https://europa.eu *.ajax.googleapis.com *.ajax.aspnetcdn.com *.gstatic.com *.google.com blob:; frame-ancestors 'self' *.gdacs.org https://gdacs.org https://www.gdacs.org
+X-Frame-Options: SAMEORIGIN
+Referrer-Policy: strict-origin-when-cross-origin
+Date: Fri, 23 Oct 2026 15:24:32 GMT
+Set-Cookie: jrc_cookie=!E6r2pc+EgCCQZFi2i5OOGGrt79E3+BLd8Y3j/fgLI4p0Z/C+S0jiUV5xvYUhHMth5dJy3G4mhsznD2A=; path=/; Httponly; Secure
+Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+Set-Cookie: TS017bc0d6=01f4fc03ddf27d56d1b2186447bdb4ff4e347f2f945a5869901f7a29fe5cb3b5c3b9a7634db918b7f6e8f6550bb04cbb383c46d3d3; Path=/
+
