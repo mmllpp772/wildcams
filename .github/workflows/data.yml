@@ -1,0 +1,28 @@
+name: live-data
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+  push:
+    paths: ['.github/workflows/data.yml', '.github/scripts/fetch_data.py']
+permissions:
+  contents: write
+concurrency:
+  group: live-data
+  cancel-in-progress: true
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: .github/scripts
+      - name: Fetch
+        run: python3 .github/scripts/fetch_data.py
+      - name: Publish to the data branch (single commit, no history)
+        run: |
+          cd out
+          git init -q && git checkout -q -b data && git add -A
+          git -c user.name=live-data -c user.email=live-data@users.noreply.github.com commit -qm "live data $(date -u +%FT%TZ)"
+          git push -fq "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}" data
