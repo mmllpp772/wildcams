@@ -15,21 +15,15 @@ jobs:
           probe(){ n=$1; u=$2; echo "== $n $u" >> out/report.txt
             curl -sS -m 25 -L -H "Origin: https://mmllpp772.github.io" -H "Accept-Encoding: gzip" --compressed -D out/h_$n.txt -o out/b_$n.txt "$u" -w "code=%{http_code} size=%{size_download}\n" >> out/report.txt 2>&1
             grep -i -E "^(access-control-allow-origin|content-type|x-ratelimit)" out/h_$n.txt >> out/report.txt
-            head -c 600 out/b_$n.txt >> out/report.txt; echo >> out/report.txt; echo >> out/report.txt; }
-          probe usgs "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_day.geojson"
-          probe gdacs_list "https://www.gdacs.org/gdacsapi/api/events/geteventlist/SEARCH?eventlist=TC&fromDate=2026-10-10&toDate=2026-10-24"
-          probe gdacs_map "https://www.gdacs.org/gdacsapi/api/events/geteventlist/MAP?eventtypes=TC"
-          probe nhc "https://www.nhc.noaa.gov/CurrentStorms.json"
-          probe jma "https://www.jma.go.jp/bosai/typhoon/data/targetTc.json"
-          probe opensky "https://opensky-network.org/api/states/all"
-          probe adsblol "https://api.adsb.lol/v2/point/25/121/250"
-          probe adsblol_all "https://api.adsb.lol/v2/all"
-          probe airplaneslive "https://api.airplanes.live/v2/point/25/121/250"
-          probe adsbfi "https://opendata.adsb.fi/api/v2/lat/25/lon/121/dist/250"
-          probe digitraffic "https://meri.digitraffic.fi/api/ais/v1/locations"
-          probe aishub "https://data.aishub.net/ws.php"
-          probe decapi "https://decapi.me/twitch/viewercount/alveussanctuary"
-          probe kystverket "https://kystdatahuset.no/ws/api/ais/positions/latest"
+            head -c 3000 out/b_$n.txt >> out/report.txt; echo >> out/report.txt; echo >> out/report.txt; }
+          probe gdacs_full "https://www.gdacs.org/gdacsapi/api/events/geteventlist/SEARCH?eventlist=TC&fromDate=2026-10-13&toDate=2026-10-24"
+          probe gdacs_geom "https://www.gdacs.org/gdacsapi/api/polygons/getgeometry?eventtype=TC&eventid=1001338&episodeid=35"
+          probe gdacs_ev "https://www.gdacs.org/gdacsapi/api/events/geteventdata?eventtype=TC&eventid=1001338"
+          probe jma_spec "https://www.jma.go.jp/bosai/typhoon/data/TC2636/specifications.json"
+          probe jma_fc "https://www.jma.go.jp/bosai/typhoon/data/TC2636/forecast.json"
+          probe dt_vessels "https://meri.digitraffic.fi/api/ais/v1/vessels"
+          probe usgs_week "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.geojson"
+          probe raw "https://raw.githubusercontent.com/mmllpp772/wildcams/main/README.md"
           ls -la out >> out/report.txt
       - name: Save report to probe branch
         run: |
